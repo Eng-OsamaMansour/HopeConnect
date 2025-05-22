@@ -21,7 +21,7 @@ class VolunteerOfferRequest(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=OfferStatus.choices,default=OfferStatus.OPEN)
-    embedding = models.ArrayField(models.FloatField(), null=True, blank=True)
+    embedding = models.CharField(models.FloatField(), null=True, blank=True)
     is_open = models.BooleanField(default=True)
     def save(self, *args, **kwargs):    
         text = f"{self.title}. {self.description}"

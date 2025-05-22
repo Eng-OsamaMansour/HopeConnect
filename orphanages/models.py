@@ -22,7 +22,7 @@ class OrphanageNeedRequest(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    embedding = models.ArrayField(models.FloatField(), null=True, blank=True)
+    embedding = models.CharField(models.FloatField(), null=True, blank=True)
     is_open = models.BooleanField(default=True)
     def __str__(self):
         return f"{self.orphanage} – {self.title}"
