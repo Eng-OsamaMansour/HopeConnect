@@ -33,6 +33,11 @@ services:
     command: celery -A hopeconnect beat -l info
     depends_on: [db, redis]
     environment: ["CELERY_BROKER_URL=redis://redis:6379/0"]
+  django:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on: [db, redis]
+    environment: ["CELERY_BROKER_URL=redis://redis:6379/0"]
 
 volumes:
   mysql_data:
