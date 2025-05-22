@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: hope_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: hopeconnect
+      MYSQL_USER: hopeuser
+      MYSQL_PASSWORD: hopepass
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+  redis:
+    image: redis:7
+    container_name: hope_redis
+    restart: unless-stopped
+    ports: ["6379:6379"]
+  celery_worker:
+    build: .
+    command: celery -A hopeconnect worker -l info
+    depends_on: [db, redis]
+    environment: ["CELERY_BROKER_URL=redis://redis:6379/0"]
+  celery_beat:
+    build: .
+    command: celery -A hopeconnect beat -l info
+    depends_on: [db, redis]
+    environment: ["CELERY_BROKER_URL=redis://redis:6379/0"]
+
+volumes:
+  mysql_data:
+
+
+

@@ -11,9 +11,16 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from pathlib import Path
+import os, dj_database_url
+from dotenv import load_dotenv
+from celery.schedules import crontab
+from decimal import Decimal
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -37,7 +44,33 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'rest_framework',
+    "drf_spectacular",           
+    "drf_spectacular_sidecar",
+    'accounts',
+    'campaigns',
+    'donations',
+    'logistics',
+    'orphanages',
+    'orphan',
+    'volunteers',
+    'channels',
+
 ]
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "EXCEPTION_HANDLER": "common.exceptions.api_exception_handler",
+}
+AUTH_USER_MODEL = "accounts.User"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -71,12 +104,14 @@ WSGI_APPLICATION = 'hopeconnect.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.parse(
+        f"mysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}"
+        f"@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}",
+        engine="django.db.backends.mysql",
+        conn_max_age=600,
+    )
 }
 
 
@@ -116,7 +151,44 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = BASE_DIR / "staticfiles"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "HopeConnect API",
+    "DESCRIPTION": "Backend for orphan sponsorship, donations and logistics.",
+    "VERSION": "0.1.0",
+    "SERVE_INCLUDE_SCHEMA": False,          # schema served at /schema/
+    # reusable error component so every 4xx/5xx is uniform
+    "COMPONENT_SPLIT_REQUEST": True,
+    "COMPONENTS": {
+        "schemas": {
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "status": {"type": "string", "example": "error"},
+                    "code":   {"type": "integer", "example": 400},
+                    "detail": {"type": "string", "example": "Invalid input"},
+                    "errors": {"type": "object"},
+                },
+                "required": ["status", "code", "detail"],
+            }
+        }
+    },
+    # automatically attach {400: ErrorResponse, 401: …} to every op
+    "DEFAULT_STATUS_CODES": [400, 401, 403, 404, 500],
+}
+
+CELERY_BEAT_SCHEDULE = {
+    "run-semantic-matching": {
+        "task": "matcher.tasks.run_semantic_matching",
+        "schedule": crontab(hour=3, minute=0),
+    },
+}
+
+ASGI_APPLICATION = "hopeconnect.asgi.application"
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels_redis.core.RedisChannelLayer",
+                              "CONFIG": {"hosts": [("localhost", 6379)]}}}
