@@ -14,9 +14,9 @@ class Location(models.Model):
 class Delivery(models.Model):
     donation = models.OneToOneField(Donation, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=DeliveryStatus.choices, default=DeliveryStatus.PENDING)
-    pickup_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="pickup_deliveries")
-    dropOff_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="dropOff_deliveries")
-    current_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="current_deliveries")
+    pickup_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="pickup_deliveries",null=True, blank=True)
+    dropOff_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="dropOff_deliveries",null=True, blank=True)
+    current_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="current_deliveries",null=True, blank=True)
     pickup_date = models.DateField(null=True, blank=True)
     dropOff_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

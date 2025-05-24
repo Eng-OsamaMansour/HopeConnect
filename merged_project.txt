@@ -1,0 +1,6226 @@
+
+--- FILE: hopeconnect_postman_collection.json ---
+
+{
+  "info": {
+    "name": "HopeConnect API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "5538ffe1-9d94-4d04-a07b-b629ba44a56e",
+    "description": "Postman collection to test all HopeConnect backend endpoints."
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "refresh_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"donor1@example.com\",\n  \"password\": \"donor123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login",
+                ""
+              ]
+            },
+            "description": "Obtain JWT access & refresh tokens (no auth required)."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout",
+                ""
+              ]
+            },
+            "description": "Blacklist refresh token and logout."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Register user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"DONOR\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ""
+              ]
+            },
+            "description": "Create new user (public)."
+          },
+          "response": []
+        },
+        {
+          "name": "List users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ""
+              ]
+            },
+            "description": "List all users (admin only)."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve my profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/users/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1",
+                ""
+              ]
+            },
+            "description": "Get specific user by id (self or admin)."
+          },
+          "response": []
+        },
+        {
+          "name": "Update my profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Updated\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1",
+                ""
+              ]
+            },
+            "description": "Partial update (self or admin)."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete my profile (soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/users/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1",
+                ""
+              ]
+            },
+            "description": "Soft delete user account (self)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Donations",
+      "item": [
+        {
+          "name": "Create General Donation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"donation_type\": \"ORPHAN\",\n  \"orphan\": 1,\n  \"description\": \"Winter clothes\",\n  \"material\": \"Clothes\",\n  \"quantity\": 5,\n  \"need_transportation\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donations/general/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donations",
+                "general",
+                ""
+              ]
+            },
+            "description": "Donor creates a general material donation."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Money Donation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"donation_type\": \"ORPHAN\",\n  \"orphan\": 1,\n  \"amount\": 100,\n  \"currency\": \"USD\",\n  \"pay_for\": \"Education\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donations/money/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donations",
+                "money",
+                ""
+              ]
+            },
+            "description": "Donor creates a money donation."
+          },
+          "response": []
+        },
+        {
+          "name": "List my Donations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/donations/donor/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donations",
+                "donor",
+                ""
+              ]
+            },
+            "description": "List all donations made by the authenticated donor."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Donation Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donations/1/status/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donations",
+                "1",
+                "status",
+                ""
+              ]
+            },
+            "description": "Admin updates donation status."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Donation Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"report\": \"Donation delivered successfully.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donations/1/report/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donations",
+                "1",
+                "report",
+                ""
+              ]
+            },
+            "description": "Orphanage/ Admin creates a report for a donation."
+          },
+          "response": []
+        },
+        {
+          "name": "List Donation Reports",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/donations/1/reports/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donations",
+                "1",
+                "reports",
+                ""
+              ]
+            },
+            "description": "Donor views reports for a donation."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Deliveries",
+      "item": [
+        {
+          "name": "Create Delivery",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"donation\": 1,\n  \"pickup_location\": {\n    \"latitude\": 32.22,\n    \"longitude\": 35.28\n  },\n  \"dropoff_location\": {\n    \"latitude\": 32.23,\n    \"longitude\": 35.27\n  },\n  \"current_location\": {\n    \"latitude\": 32.22,\n    \"longitude\": 35.28\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/deliveries/create/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "deliveries",
+                "create",
+                ""
+              ]
+            },
+            "description": "Admin creates delivery for a donation."
+          },
+          "response": []
+        },
+        {
+          "name": "List all Deliveries",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/deliveries/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "deliveries",
+                ""
+              ]
+            },
+            "description": "Admin/Logistics list all deliveries."
+          },
+          "response": []
+        },
+        {
+          "name": "List my Deliveries",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/deliveries/donor/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "deliveries",
+                "donor",
+                ""
+              ]
+            },
+            "description": "Donor lists deliveries of their donations."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Delivery Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_TRANSIT\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/deliveries/1/status/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "deliveries",
+                "1",
+                "status",
+                ""
+              ]
+            },
+            "description": "Admin/Logistics updates delivery status."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create Payment Intent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"donation_id\": 1,\n  \"amount\": 100,\n  \"currency\": \"USD\",\n  \"payment_method\": \"card\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/create_payment_intent/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "create_payment_intent",
+                ""
+              ]
+            },
+            "description": "Create Stripe payment intent for money donation."
+          },
+          "response": []
+        },
+        {
+          "name": "List Payments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/payments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                ""
+              ]
+            },
+            "description": "List payments for donor."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve Payment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/payments/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "1",
+                ""
+              ]
+            },
+            "description": "Get payment details."
+          },
+          "response": []
+        },
+        {
+          "name": "Refund Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/1/refund/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "1",
+                "refund",
+                ""
+              ]
+            },
+            "description": "Request refund on a payment."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orphans",
+      "item": [
+        {
+          "name": "Create Orphan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orphanage\": 1,\n  \"national_id\": \"12345678901234\",\n  \"name\": \"Ahmed\",\n  \"gender\": \"M\",\n  \"birth_date\": \"2010-05-23\",\n  \"health_info\": \"Healthy\",\n  \"education_status\": \"Primary\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphans/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphans",
+                ""
+              ]
+            },
+            "description": "Orphanage creates a new orphan record."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Orphan Update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Quarterly progress\",\n  \"note\": \"Doing well in school.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphans/1/updates/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphans",
+                "1",
+                "updates",
+                ""
+              ]
+            },
+            "description": "Orphanage posts an update for an orphan."
+          },
+          "response": []
+        },
+        {
+          "name": "List Orphan Updates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/orphans/1/updates/list/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphans",
+                "1",
+                "updates",
+                "list",
+                ""
+              ]
+            },
+            "description": "View updates for an orphan."
+          },
+          "response": []
+        },
+        {
+          "name": "Sponsor Orphan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphans/1/sponsor/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphans",
+                "1",
+                "sponsor",
+                ""
+              ]
+            },
+            "description": "Donor sponsors an orphan."
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Sponsorship",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphans/sponsors/1/cancel/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphans",
+                "sponsors",
+                "1",
+                "cancel",
+                ""
+              ]
+            },
+            "description": "Donor cancels sponsorship."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orphanages",
+      "item": [
+        {
+          "name": "List Orphanages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/orphanages/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphanages",
+                ""
+              ]
+            },
+            "description": "Public list orphanages."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Orphanage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hope Home\",\n  \"city\": \"Nablus\",\n  \"latitude\": 32.22,\n  \"longitude\": 35.26,\n  \"manager\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphanages/create/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphanages",
+                "create",
+                ""
+              ]
+            },
+            "description": "Admin creates orphanage."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Orphanage",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"city\": \"Ramallah\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphanages/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphanages",
+                "1",
+                ""
+              ]
+            },
+            "description": "Admin/Manager updates orphanage."
+          },
+          "response": []
+        },
+        {
+          "name": "List Orphanage Reviews",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/orphanages/1/reviews/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphanages",
+                "1",
+                "reviews",
+                ""
+              ]
+            },
+            "description": "Public list reviews of orphanage."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Orphanage Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stars\": 5,\n  \"comment\": \"Great care!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphanages/1/reviews/create/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphanages",
+                "1",
+                "reviews",
+                "create",
+                ""
+              ]
+            },
+            "description": "Donor reviews an orphanage."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Volunteers",
+      "item": [
+        {
+          "name": "Create Volunteer Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"skills\": [\n    \"Teaching\",\n    \"Sports\"\n  ],\n  \"availability\": {\n    \"weekdays\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/volunteers/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "volunteers",
+                ""
+              ]
+            },
+            "description": "User with Volunteer role creates volunteer profile."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Volunteer Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"skills\": [\n    \"Teaching\",\n    \"Medical\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/volunteers/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "volunteers",
+                "1",
+                ""
+              ]
+            },
+            "description": "Volunteer updates own profile."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Volunteer Offer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Math tutoring\",\n  \"description\": \"Can teach math to kids.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/volunteer-offers/create/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "volunteer-offers",
+                "create",
+                ""
+              ]
+            },
+            "description": "Volunteer creates offer request."
+          },
+          "response": []
+        },
+        {
+          "name": "List All Offers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/volunteer-offers/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "volunteer-offers",
+                ""
+              ]
+            },
+            "description": "Admin/Orphanage/Volunteer list offers."
+          },
+          "response": []
+        },
+        {
+          "name": "List My Offers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/volunteer-offers/my-requests/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "volunteer-offers",
+                "my-requests",
+                ""
+              ]
+            },
+            "description": "Volunteer lists own offers."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Matcher",
+      "item": [
+        {
+          "name": "List Matches",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/matcher/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "matcher",
+                ""
+              ]
+            },
+            "description": "Get matches (Admin, Orphanage, Volunteer)."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
+
+
+--- FILE: manage.py ---
+
+#!/usr/bin/env python
+"""Django's command-line utility for administrative tasks."""
+import os
+import sys
+
+
+def main():
+    """Run administrative tasks."""
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hopeconnect.settings')
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:
+        raise ImportError(
+            "Couldn't import Django. Are you sure it's installed and "
+            "available on your PYTHONPATH environment variable? Did you "
+            "forget to activate a virtual environment?"
+        ) from exc
+    execute_from_command_line(sys.argv)
+
+
+if __name__ == '__main__':
+    main()
+
+
+
+--- FILE: merged_project.txt ---
+
+
+--- FILE: hopeconnect_postman_collection.json ---
+
+{
+  "info": {
+    "name": "HopeConnect API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "5538ffe1-9d94-4d04-a07b-b629ba44a56e",
+    "description": "Postman collection to test all HopeConnect backend endpoints."
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "refresh_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"donor1@example.com\",\n  \"password\": \"donor123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login",
+                ""
+              ]
+            },
+            "description": "Obtain JWT access & refresh tokens (no auth required)."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout",
+                ""
+              ]
+            },
+            "description": "Blacklist refresh token and logout."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Register user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"DONOR\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ""
+              ]
+            },
+            "description": "Create new user (public)."
+          },
+          "response": []
+        },
+        {
+          "name": "List users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/users/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                ""
+              ]
+            },
+            "description": "List all users (admin only)."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve my profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/users/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1",
+                ""
+              ]
+            },
+            "description": "Get specific user by id (self or admin)."
+          },
+          "response": []
+        },
+        {
+          "name": "Update my profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"first_name\": \"Updated\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1",
+                ""
+              ]
+            },
+            "description": "Partial update (self or admin)."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete my profile (soft)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/users/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1",
+                ""
+              ]
+            },
+            "description": "Soft delete user account (self)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Donations",
+      "item": [
+        {
+          "name": "Create General Donation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"donation_type\": \"ORPHAN\",\n  \"orphan\": 1,\n  \"description\": \"Winter clothes\",\n  \"material\": \"Clothes\",\n  \"quantity\": 5,\n  \"need_transportation\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donations/general/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donations",
+                "general",
+                ""
+              ]
+            },
+            "description": "Donor creates a general material donation."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Money Donation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"donation_type\": \"ORPHAN\",\n  \"orphan\": 1,\n  \"amount\": 100,\n  \"currency\": \"USD\",\n  \"pay_for\": \"Education\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donations/money/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donations",
+                "money",
+                ""
+              ]
+            },
+            "description": "Donor creates a money donation."
+          },
+          "response": []
+        },
+        {
+          "name": "List my Donations",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/donations/donor/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donations",
+                "donor",
+                ""
+              ]
+            },
+            "description": "List all donations made by the authenticated donor."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Donation Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donations/1/status/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donations",
+                "1",
+                "status",
+                ""
+              ]
+            },
+            "description": "Admin updates donation status."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Donation Report",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"report\": \"Donation delivered successfully.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/donations/1/report/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donations",
+                "1",
+                "report",
+                ""
+              ]
+            },
+            "description": "Orphanage/ Admin creates a report for a donation."
+          },
+          "response": []
+        },
+        {
+          "name": "List Donation Reports",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/donations/1/reports/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "donations",
+                "1",
+                "reports",
+                ""
+              ]
+            },
+            "description": "Donor views reports for a donation."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Deliveries",
+      "item": [
+        {
+          "name": "Create Delivery",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"donation\": 1,\n  \"pickup_location\": {\n    \"latitude\": 32.22,\n    \"longitude\": 35.28\n  },\n  \"dropoff_location\": {\n    \"latitude\": 32.23,\n    \"longitude\": 35.27\n  },\n  \"current_location\": {\n    \"latitude\": 32.22,\n    \"longitude\": 35.28\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/deliveries/create/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "deliveries",
+                "create",
+                ""
+              ]
+            },
+            "description": "Admin creates delivery for a donation."
+          },
+          "response": []
+        },
+        {
+          "name": "List all Deliveries",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/deliveries/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "deliveries",
+                ""
+              ]
+            },
+            "description": "Admin/Logistics list all deliveries."
+          },
+          "response": []
+        },
+        {
+          "name": "List my Deliveries",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/deliveries/donor/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "deliveries",
+                "donor",
+                ""
+              ]
+            },
+            "description": "Donor lists deliveries of their donations."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Delivery Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_TRANSIT\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/deliveries/1/status/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "deliveries",
+                "1",
+                "status",
+                ""
+              ]
+            },
+            "description": "Admin/Logistics updates delivery status."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create Payment Intent",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"donation_id\": 1,\n  \"amount\": 100,\n  \"currency\": \"USD\",\n  \"payment_method\": \"card\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/create_payment_intent/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "create_payment_intent",
+                ""
+              ]
+            },
+            "description": "Create Stripe payment intent for money donation."
+          },
+          "response": []
+        },
+        {
+          "name": "List Payments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/payments/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                ""
+              ]
+            },
+            "description": "List payments for donor."
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve Payment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/payments/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "1",
+                ""
+              ]
+            },
+            "description": "Get payment details."
+          },
+          "response": []
+        },
+        {
+          "name": "Refund Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/1/refund/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "payments",
+                "1",
+                "refund",
+                ""
+              ]
+            },
+            "description": "Request refund on a payment."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orphans",
+      "item": [
+        {
+          "name": "Create Orphan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orphanage\": 1,\n  \"national_id\": \"12345678901234\",\n  \"name\": \"Ahmed\",\n  \"gender\": \"M\",\n  \"birth_date\": \"2010-05-23\",\n  \"health_info\": \"Healthy\",\n  \"education_status\": \"Primary\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphans/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphans",
+                ""
+              ]
+            },
+            "description": "Orphanage creates a new orphan record."
+          },
+          "response": []
+        },
+        {
+          "name": "Add Orphan Update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Quarterly progress\",\n  \"note\": \"Doing well in school.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphans/1/updates/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphans",
+                "1",
+                "updates",
+                ""
+              ]
+            },
+            "description": "Orphanage posts an update for an orphan."
+          },
+          "response": []
+        },
+        {
+          "name": "List Orphan Updates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/orphans/1/updates/list/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphans",
+                "1",
+                "updates",
+                "list",
+                ""
+              ]
+            },
+            "description": "View updates for an orphan."
+          },
+          "response": []
+        },
+        {
+          "name": "Sponsor Orphan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphans/1/sponsor/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphans",
+                "1",
+                "sponsor",
+                ""
+              ]
+            },
+            "description": "Donor sponsors an orphan."
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Sponsorship",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"is_active\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphans/sponsors/1/cancel/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphans",
+                "sponsors",
+                "1",
+                "cancel",
+                ""
+              ]
+            },
+            "description": "Donor cancels sponsorship."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Orphanages",
+      "item": [
+        {
+          "name": "List Orphanages",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/orphanages/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphanages",
+                ""
+              ]
+            },
+            "description": "Public list orphanages."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Orphanage",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Hope Home\",\n  \"city\": \"Nablus\",\n  \"latitude\": 32.22,\n  \"longitude\": 35.26,\n  \"manager\": 3\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphanages/create/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphanages",
+                "create",
+                ""
+              ]
+            },
+            "description": "Admin creates orphanage."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Orphanage",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"city\": \"Ramallah\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphanages/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphanages",
+                "1",
+                ""
+              ]
+            },
+            "description": "Admin/Manager updates orphanage."
+          },
+          "response": []
+        },
+        {
+          "name": "List Orphanage Reviews",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/orphanages/1/reviews/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphanages",
+                "1",
+                "reviews",
+                ""
+              ]
+            },
+            "description": "Public list reviews of orphanage."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Orphanage Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stars\": 5,\n  \"comment\": \"Great care!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/orphanages/1/reviews/create/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "orphanages",
+                "1",
+                "reviews",
+                "create",
+                ""
+              ]
+            },
+            "description": "Donor reviews an orphanage."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Volunteers",
+      "item": [
+        {
+          "name": "Create Volunteer Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"skills\": [\n    \"Teaching\",\n    \"Sports\"\n  ],\n  \"availability\": {\n    \"weekdays\": true\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/volunteers/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "volunteers",
+                ""
+              ]
+            },
+            "description": "User with Volunteer role creates volunteer profile."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Volunteer Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"skills\": [\n    \"Teaching\",\n    \"Medical\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/volunteers/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "volunteers",
+                "1",
+                ""
+              ]
+            },
+            "description": "Volunteer updates own profile."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Volunteer Offer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Math tutoring\",\n  \"description\": \"Can teach math to kids.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/volunteer-offers/create/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "volunteer-offers",
+                "create",
+                ""
+              ]
+            },
+            "description": "Volunteer creates offer request."
+          },
+          "response": []
+        },
+        {
+          "name": "List All Offers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/volunteer-offers/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "volunteer-offers",
+                ""
+              ]
+            },
+            "description": "Admin/Orphanage/Volunteer list offers."
+          },
+          "response": []
+        },
+        {
+          "name": "List My Offers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/volunteer-offers/my-requests/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "volunteer-offers",
+                "my-requests",
+                ""
+              ]
+            },
+            "description": "Volunteer lists own offers."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Matcher",
+      "item": [
+        {
+          "name": "List Matches",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "body": {},
+            "url": {
+              "raw": "{{base_url}}/api/matcher/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "matcher",
+                ""
+              ]
+            },
+            "description": "Get matches (Admin, Orphanage, Volunteer)."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
+
+
+--- FILE: requirements.txt ---
+
+[Error reading file: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte]
+
+
+--- FILE: user_credentials.json ---
+
+[
+  {
+    "email": "admin1@example.com",
+    "password": "admin123",
+    "role": "ADMIN"
+  },
+  {
+    "email": "admin2@example.com",
+    "password": "admin123",
+    "role": "ADMIN"
+  },
+  {
+    "email": "donor1@example.com",
+    "password": "donor123",
+    "role": "DONOR"
+  },
+  {
+    "email": "donor2@example.com",
+    "password": "donor123",
+    "role": "DONOR"
+  },
+  {
+    "email": "donor3@example.com",
+    "password": "donor123",
+    "role": "DONOR"
+  },
+  {
+    "email": "donor4@example.com",
+    "password": "donor123",
+    "role": "DONOR"
+  },
+  {
+    "email": "donor5@example.com",
+    "password": "donor123",
+    "role": "DONOR"
+  },
+  {
+    "email": "donor6@example.com",
+    "password": "donor123",
+    "role": "DONOR"
+  },
+  {
+    "email": "donor7@example.com",
+    "password": "donor123",
+    "role": "DONOR"
+  },
+  {
+    "email": "donor8@example.com",
+    "password": "donor123",
+    "role": "DONOR"
+  },
+  {
+    "email": "donor9@example.com",
+    "password": "donor123",
+    "role": "DONOR"
+  },
+  {
+    "email": "donor10@example.com",
+    "password": "donor123",
+    "role": "DONOR"
+  },
+  {
+    "email": "orphanage1@example.com",
+    "password": "orphanage123",
+    "role": "ORPHANAGE"
+  },
+  {
+    "email": "orphanage2@example.com",
+    "password": "orphanage123",
+    "role": "ORPHANAGE"
+  },
+  {
+    "email": "orphanage3@example.com",
+    "password": "orphanage123",
+    "role": "ORPHANAGE"
+  },
+  {
+    "email": "orphanage4@example.com",
+    "password": "orphanage123",
+    "role": "ORPHANAGE"
+  },
+  {
+    "email": "orphanage5@example.com",
+    "password": "orphanage123",
+    "role": "ORPHANAGE"
+  },
+  {
+    "email": "volunteer1@example.com",
+    "password": "volunteer123",
+    "role": "VOLUNTEER"
+  },
+  {
+    "email": "volunteer2@example.com",
+    "password": "volunteer123",
+    "role": "VOLUNTEER"
+  },
+  {
+    "email": "volunteer3@example.com",
+    "password": "volunteer123",
+    "role": "VOLUNTEER"
+  },
+  {
+    "email": "volunteer4@example.com",
+    "password": "volunteer123",
+    "role": "VOLUNTEER"
+  },
+  {
+    "email": "volunteer5@example.com",
+    "password": "volunteer123",
+    "role": "VOLUNTEER"
+  },
+  {
+    "email": "volunteer6@example.com",
+    "password": "volunteer123",
+    "role": "VOLUNTEER"
+  },
+  {
+    "email": "volunteer7@example.com",
+    "password": "volunteer123",
+    "role": "VOLUNTEER"
+  },
+  {
+    "email": "volunteer8@example.com",
+    "password": "volunteer123",
+    "role": "VOLUNTEER"
+  },
+  {
+    "email": "logistics1@example.com",
+    "password": "logistics123",
+    "role": "LOGISTICS"
+  },
+  {
+    "email": "logistics2@example.com",
+    "password": "logistics123",
+    "role": "LOGISTICS"
+  },
+  {
+    "email": "logistics3@example.com",
+    "password": "logistics123",
+    "role": "LOGISTICS"
+  }
+]
+
+
+--- FILE: accounts\admin.py ---
+
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from .models import User
+
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+    ordering         = ("-date_joined",)
+    list_display     = ("email", "role", "is_active", "is_staff", "date_joined")
+    list_filter      = ("role", "is_active", "is_staff")
+    search_fields    = ("email", "first_name", "last_name")
+    readonly_fields  = ("created_at", "updated_at", "last_login", "date_joined")
+
+    fieldsets = (
+        (None,                {"fields": ("email", "password")}),
+        ("Personal info",     {"fields": ("first_name", "last_name")}),
+        ("Roles / status",    {"fields": ("role", "is_staff", "is_superuser", "is_active")}),
+        ("Important dates",   {"fields": ("last_login", "date_joined", "created_at", "updated_at")}),
+        ("Permissions",       {"fields": ("groups", "user_permissions")}),
+    )
+    add_fieldsets = (
+        (None, {
+            "classes": ("wide",),
+            "fields": ("email", "password1", "password2", "role", "is_staff", "is_superuser", "is_active"),
+        }),
+    )
+    filter_horizontal = ("groups", "user_permissions")
+
+
+
+
+--- FILE: accounts\apps.py ---
+
+from django.apps import AppConfig
+
+
+class AccountsConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'accounts'
+
+
+
+--- FILE: accounts\models.py ---
+
+from django.db import models
+from django.contrib.auth.models import (
+    AbstractBaseUser, PermissionsMixin, BaseUserManager
+)
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+
+class Role(models.TextChoices):
+    ADMIN      = "ADMIN",  _("Admin")        
+    DONOR      = "DONOR",  _("Donor")       
+    ORPHANAGE  = "ORPHAN", _("Orphanage")    
+    VOLUNTEER  = "VOLUN",  _("Volunteer")    
+    LOGISTICS  = "LOGIS",  _("Logistics")    
+
+class UserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def _create_user(self, email: str, password: str | None, **extra_fields):
+        if not email:
+            raise ValueError("The Email field must be set")
+        email = self.normalize_email(email)
+        user  = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+    
+    def create_user(self, email: str, password: str | None = None, **extra_fields):
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
+        extra_fields.setdefault("is_active", True)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email: str, password: str | None = None, **extra_fields):
+        extra_fields.setdefault("role",       Role.ADMIN)
+        extra_fields.setdefault("is_staff",   True)
+        extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active",  True)
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
+        return self._create_user(email, password, **extra_fields)
+
+class User(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(_("email address"), unique=True)
+    first_name = models.CharField(_("first name"),  max_length=150, blank=True)
+    last_name = models.CharField(_("last name"),   max_length=150, blank=True)
+    role = models.CharField( _("role"),max_length=20,choices=Role.choices,default=Role.DONOR,)
+    phone_number = models.CharField(_("phone number"), max_length=30, blank=True)
+    is_staff = models.BooleanField(_("staff status"),default=False,help_text=_("Designates whether the user can log into the admin site."),)
+    is_active = models.BooleanField(_("active"),default=True,help_text=_("Unselect this instead of deleting accounts to disable a user."),)
+    date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    objects = UserManager()
+    USERNAME_FIELD  = "email"
+    REQUIRED_FIELDS = ["role"]
+    class Meta:
+        verbose_name        = _("user")
+        verbose_name_plural = _("users")
+        ordering            = ("-date_joined",)
+    def __str__(self) -> str:
+        return self.email
+
+    def get_full_name(self) -> str:
+        full_name = f"{self.first_name} {self.last_name}".strip()
+        return full_name or self.email
+
+    def get_short_name(self) -> str:
+        return self.first_name or self.email.split("@")[0]
+
+
+
+--- FILE: accounts\permissions.py ---
+
+from rest_framework.permissions import BasePermission, SAFE_METHODS
+from rest_framework import permissions
+from accounts.models import Role
+
+class RolePermission(BasePermission):
+    allowed_roles: set[str] = set()
+
+    def has_permission(self, request, view):
+        return (
+            request.user
+            and request.user.is_authenticated
+            and request.user.role in self.allowed_roles
+        )
+
+class IsAdmin(RolePermission):
+    allowed_roles = Role.ADMIN
+
+class IsDonor(RolePermission):
+    allowed_roles = Role.DONOR
+
+class IsOrphanage(RolePermission):
+    allowed_roles = Role.ORPHANAGE
+
+class IsVolunteer(RolePermission):
+    allowed_roles = Role.VOLUNTEER
+
+class IsLogistics(RolePermission):
+    allowed_roles = Role.LOGISTICS
+
+class OrphanageOrAdminPermission(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.user.is_staff:
+            return True
+        if request.user.role == Role.ORPHANAGE:
+            return obj.orphan.orphanage.manager == request.user
+        return False
+
+
+
+--- FILE: accounts\serializers.py ---
+
+from django.contrib.auth import get_user_model
+from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
+
+User = get_user_model()
+class RegisterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, min_length=8)
+    class Meta:
+        model  = User
+        fields = ("id", "email", "password", "first_name", "last_name", "role")
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
+
+class UserMeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = User
+        fields = ("id", "email", "first_name", "last_name", "role")
+        read_only_fields = ("email", "role")      
+
+
+
+--- FILE: accounts\tests.py ---
+
+from django.test import TestCase
+
+# Create your tests here.
+
+
+
+--- FILE: accounts\views.py ---
+
+from rest_framework import  viewsets, permissions, status,generics
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
+from accounts.models import Role
+from .serializers import RegisterSerializer, UserMeSerializer
+from .permissions import IsAdmin         
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class LoginView(TokenObtainPairView):
+    """POST /auth/login/  (anonymous → tokens)"""
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        return response
+
+class LogoutView(viewsets.ViewSet):
+    """POST /auth/logout/  (authenticated → blacklist token)"""
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(detail=False, methods=['post'])
+    def logout(self, request):
+        try:
+            refresh_token = request.data["refresh"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
+        except Exception:
+            return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+
+class UserListView(generics.ListAPIView):
+    """GET /users/ (admin → list users)"""
+    serializer_class = UserMeSerializer
+    permission_classes = [IsAdmin]
+    queryset = User.objects.filter(is_active=True)
+
+
+class UserCreateView(generics.CreateAPIView):
+    """POST /users/ (anonymous → create user with limited roles, admin → create any role)"""
+    serializer_class = RegisterSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        role = request.data.get('role')
+        if not request.user.is_staff:  # Non-admin users
+            if role not in [Role.ORPHANAGE, Role.DONOR, Role.VOLUNTEER]:
+                return Response(
+                    {"error": "Invalid role. Only Orphanage, Donor, or Volunteer roles allowed"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class UserDetailView(generics.ListAPIView):
+    """GET /users/me/ (self → user details)"""
+    serializer_class = UserMeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id)
+
+
+class UserUpdateView(generics.UpdateAPIView):
+    """PATCH /users/me/ (self → update user)"""
+    serializer_class = UserMeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    def get_object(self):
+        return self.request.user
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)
+    
+
+
+class UserDeleteView(generics.DestroyAPIView):
+    """DELETE /users/me/ (self → soft delete user)"""
+    serializer_class = UserMeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = User.objects.filter(is_active=True)
+
+    def get_queryset(self):
+        return self.queryset.filter(id=self.request.user.id)
+
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()
+
+
+
+--- FILE: accounts\__init__.py ---
+
+
+
+
+--- FILE: accounts\management\commands\seed_demo.py ---
+
+from django.core.management.base import BaseCommand
+from django.utils import timezone
+from datetime import timedelta
+import random
+import json
+from decimal import Decimal
+from faker import Faker
+from accounts.models import User, Role
+from orphanages.models import Orphanage, OrphanageNeedRequest, Review
+from orphan.models import Orphan, OrphanGender, OrphanSponsor, OrphanUpdate
+from donations.models import (
+    Donation, DonationCategory, DonationStatus, DonationType,
+    GeneralDonation, EducationDonation, MedicalDonation, MoneyDonation,
+    DonationReport
+)
+from campaigns.models import Campaign, CampaignCategory
+from logistics.models import Delivery, DeliveryStatus, Location
+from volunteers.models import Volunteer, VolunteerOfferRequest, OfferStatus
+from matcher.models import Matcher
+import os
+
+fake = Faker()
+
+class Command(BaseCommand):
+    help = 'Seeds the database with demo data'
+
+    def handle(self, *args, **kwargs):
+        # Set seeding flag
+        os.environ['DJANGO_SEEDING'] = 'true'
+        
+        self.stdout.write('Creating demo data...')
+        
+        try:
+            # Create users with different roles
+            users_data = []
+            users = self.create_users(users_data)
+            
+            # Create orphanages
+            orphanages = self.create_orphanages(users['orphanage'])
+            
+            # Create orphans
+            orphans = self.create_orphans(orphanages)
+            
+            # Create campaigns
+            campaigns = self.create_campaigns()
+            
+            # Create donations
+            donations = self.create_donations(users['donor'], orphans, campaigns)
+            
+            # Create delivery records
+            deliveries = self.create_deliveries(donations, users['logistics'])
+            
+            # Create volunteers and their offers
+            volunteers = self.create_volunteers(users['volunteer'])
+            offers = self.create_volunteer_offers(volunteers)
+            
+            # Create need requests and matches
+            need_requests = self.create_need_requests(orphanages)
+            matches = self.create_matches(need_requests, offers)
+            
+            # Create reviews
+            self.create_reviews(users['donor'], orphanages)
+            
+            # Create orphan sponsorships
+            self.create_orphan_sponsorships(orphans, users['donor'])
+            
+            # Create orphan updates
+            self.create_orphan_updates(orphans)
+            
+            # Save user credentials to a file
+            self.save_user_credentials(users_data)
+            
+            self.stdout.write(self.style.SUCCESS('Successfully created demo data'))
+        finally:
+            # Reset seeding flag
+            os.environ['DJANGO_SEEDING'] = 'false'
+
+    def create_users(self, users_data):
+        users = {
+            'admin': [],
+            'donor': [],
+            'orphanage': [],
+            'volunteer': [],
+            'logistics': []
+        }
+        
+        # Create admin users
+        for i in range(2):
+            user = User.objects.create_user(
+                email=f'admin{i+1}@example.com',
+                password='admin123',
+                first_name=fake.first_name(),
+                last_name=fake.last_name(),
+                role=Role.ADMIN,
+                phone_number=fake.phone_number()
+            )
+            users['admin'].append(user)
+            users_data.append({
+                'email': user.email,
+                'password': 'admin123',
+                'role': 'ADMIN'
+            })
+
+        # Create donor users
+        for i in range(10):
+            user = User.objects.create_user(
+                email=f'donor{i+1}@example.com',
+                password='donor123',
+                first_name=fake.first_name(),
+                last_name=fake.last_name(),
+                role=Role.DONOR,
+                phone_number=fake.phone_number()
+            )
+            users['donor'].append(user)
+            users_data.append({
+                'email': user.email,
+                'password': 'donor123',
+                'role': 'DONOR'
+            })
+
+        # Create orphanage users
+        for i in range(5):
+            user = User.objects.create_user(
+                email=f'orphanage{i+1}@example.com',
+                password='orphanage123',
+                first_name=fake.first_name(),
+                last_name=fake.last_name(),
+                role=Role.ORPHANAGE,
+                phone_number=fake.phone_number()
+            )
+            users['orphanage'].append(user)
+            users_data.append({
+                'email': user.email,
+                'password': 'orphanage123',
+                'role': 'ORPHANAGE'
+            })
+
+        # Create volunteer users
+        for i in range(8):
+            user = User.objects.create_user(
+                email=f'volunteer{i+1}@example.com',
+                password='volunteer123',
+                first_name=fake.first_name(),
+                last_name=fake.last_name(),
+                role=Role.VOLUNTEER,
+                phone_number=fake.phone_number()
+            )
+            users['volunteer'].append(user)
+            users_data.append({
+                'email': user.email,
+                'password': 'volunteer123',
+                'role': 'VOLUNTEER'
+            })
+
+        # Create logistics users
+        for i in range(3):
+            user = User.objects.create_user(
+                email=f'logistics{i+1}@example.com',
+                password='logistics123',
+                first_name=fake.first_name(),
+                last_name=fake.last_name(),
+                role=Role.LOGISTICS,
+                phone_number=fake.phone_number()
+            )
+            users['logistics'].append(user)
+            users_data.append({
+                'email': user.email,
+                'password': 'logistics123',
+                'role': 'LOGISTICS'
+            })
+
+        return users
+
+    def create_orphanages(self, orphanage_users):
+        orphanages = []
+        for user in orphanage_users:
+            orphanage = Orphanage.objects.create(
+                manager=user,
+                name=fake.company(),
+                city=fake.city(),
+                latitude=Decimal(str(fake.latitude())),
+                longitude=Decimal(str(fake.longitude())),
+                is_public_approved=random.choice([True, False])
+            )
+            orphanages.append(orphanage)
+        return orphanages
+
+    def create_orphans(self, orphanages):
+        orphans = []
+        for orphanage in orphanages:
+            for _ in range(random.randint(5, 15)):
+                orphan = Orphan.objects.create(
+                    orphanage=orphanage,
+                    national_id=fake.unique.random_number(digits=14),
+                    name=fake.name(),
+                    gender=random.choice([OrphanGender.MALE, OrphanGender.FEMALE]),
+                    birth_date=fake.date_of_birth(minimum_age=5, maximum_age=18),
+                    health_info=fake.text(),
+                    education_status=random.choice(['Primary', 'Secondary', 'High School'])
+                )
+                orphans.append(orphan)
+        return orphans
+
+    def create_campaigns(self):
+        campaigns = []
+        for _ in range(5):
+            campaign = Campaign.objects.create(
+                title=fake.catch_phrase(),
+                category=random.choice([c[0] for c in CampaignCategory.choices]),
+                goal_amount=Decimal(random.randint(1000, 10000)),
+                start=timezone.now().date(),
+                end=timezone.now().date() + timedelta(days=random.randint(30, 90)),
+                is_open=True
+            )
+            campaigns.append(campaign)
+        return campaigns
+
+    def create_donations(self, donors, orphans, campaigns):
+        donations = []
+        
+        # Create general donations
+        for _ in range(20):
+            donation = GeneralDonation.objects.create(
+                donor=random.choice(donors),
+                orphan=random.choice(orphans),
+                campaign=random.choice(campaigns),
+                description=fake.text(),
+                material=random.choice(['Clothes', 'Books', 'Toys', 'Food']),
+                quantity=random.randint(1, 10),
+                need_transportation=random.choice([True, False]),
+                status=random.choice([s[0] for s in DonationStatus.choices]),
+                donation_type=random.choice([t[0] for t in DonationType.choices])
+            )
+            donations.append(donation)
+
+        # Create education donations
+        for _ in range(15):
+            donation = EducationDonation.objects.create(
+                donor=random.choice(donors),
+                orphan=random.choice(orphans),
+                campaign=random.choice(campaigns),
+                field=random.choice(['Math', 'Science', 'English', 'Art']),
+                course=random.choice(['Basic', 'Intermediate', 'Advanced']),
+                course_duration=random.randint(1, 12),
+                hours_per_week=random.randint(1, 5),
+                status=random.choice([s[0] for s in DonationStatus.choices]),
+                donation_type=random.choice([t[0] for t in DonationType.choices])
+            )
+            donations.append(donation)
+
+        # Create medical donations
+        for _ in range(10):
+            donation = MedicalDonation.objects.create(
+                donor=random.choice(donors),
+                orphan=random.choice(orphans),
+                campaign=random.choice(campaigns),
+                supply_type=random.choice(['Medicine', 'Equipment', 'First Aid']),
+                quantity=random.randint(1, 5),
+                description=fake.text(),
+                status=random.choice([s[0] for s in DonationStatus.choices]),
+                donation_type=random.choice([t[0] for t in DonationType.choices])
+            )
+            donations.append(donation)
+
+        # Create money donations
+        for _ in range(25):
+            donation = MoneyDonation.objects.create(
+                donor=random.choice(donors),
+                orphan=random.choice(orphans),
+                campaign=random.choice(campaigns),
+                amount=Decimal(random.randint(50, 1000)),
+                pay_for=random.choice(['Education', 'Medical', 'Food', 'Clothing']),
+                currency='USD',
+                status=random.choice([s[0] for s in DonationStatus.choices]),
+                donation_type=random.choice([t[0] for t in DonationType.choices])
+            )
+            donations.append(donation)
+
+        return donations
+
+    def create_deliveries(self, donations, logistics_users):
+        deliveries = []
+        for donation in donations:
+            if isinstance(donation, GeneralDonation) and donation.need_transportation:
+                # Create locations first
+                pickup_location = Location.objects.create(
+                    latitude=float(fake.latitude()),
+                    longitude=float(fake.longitude())
+                )
+                dropoff_location = Location.objects.create(
+                    latitude=float(fake.latitude()),
+                    longitude=float(fake.longitude())
+                )
+                current_location = Location.objects.create(
+                    latitude=float(fake.latitude()),
+                    longitude=float(fake.longitude())
+                )
+
+                # Create delivery with the locations
+                delivery = Delivery.objects.create(
+                    donation=donation,
+                    status=random.choice([s[0] for s in DeliveryStatus.choices]),
+                    pickup_location=pickup_location,
+                    dropOff_location=dropoff_location,
+                    current_location=current_location,
+                    pickup_date=fake.date_this_month(),
+                    dropOff_date=fake.date_this_month()
+                )
+                deliveries.append(delivery)
+        return deliveries
+
+    def create_volunteers(self, volunteer_users):
+        volunteers = []
+        for user in volunteer_users:
+            volunteer = Volunteer.objects.create(
+                user=user,
+                skills=json.dumps(random.sample(['Teaching', 'Cooking', 'Cleaning', 'Medical', 'Sports'], k=random.randint(1, 3))),
+                availability=json.dumps({
+                    'weekdays': random.choice([True, False]),
+                    'weekends': random.choice([True, False]),
+                    'morning': random.choice([True, False]),
+                    'afternoon': random.choice([True, False]),
+                    'evening': random.choice([True, False])
+                })
+            )
+            volunteers.append(volunteer)
+        return volunteers
+
+    def create_volunteer_offers(self, volunteers):
+        offers = []
+        for volunteer in volunteers:
+            for _ in range(random.randint(1, 3)):
+                offer = VolunteerOfferRequest.objects.create(
+                    volunteer=volunteer,
+                    title=fake.catch_phrase(),
+                    description=fake.text(),
+                    status=random.choice([s[0] for s in OfferStatus.choices]),
+                    is_open=random.choice([True, False])
+                )
+                offers.append(offer)
+        return offers
+
+    def create_need_requests(self, orphanages):
+        need_requests = []
+        for orphanage in orphanages:
+            for _ in range(random.randint(2, 5)):
+                request = OrphanageNeedRequest.objects.create(
+                    orphanage=orphanage,
+                    title=fake.catch_phrase(),
+                    description=fake.text(),
+                    is_open=True
+                )
+                need_requests.append(request)
+        return need_requests
+
+    def create_matches(self, need_requests, offers):
+        matches = []
+        for need_request in need_requests:
+            if random.random() < 0.7:  # 70% chance of matching
+                offer = random.choice(offers)
+                match = Matcher.objects.create(
+                    need_request=need_request,
+                    volunteer_offer=offer
+                )
+                matches.append(match)
+        return matches
+
+    def create_reviews(self, donors, orphanages):
+        # Create a pool of donors for each orphanage
+        for orphanage in orphanages:
+            # Randomly select a subset of donors for this orphanage
+            available_donors = random.sample(donors, k=min(5, len(donors)))
+            for donor in available_donors:
+                Review.objects.create(
+                    orphanage=orphanage,
+                    donor=donor,
+                    stars=random.randint(1, 5),
+                    comment=fake.text()
+                )
+
+    def create_orphan_sponsorships(self, orphans, donors):
+        for orphan in orphans:
+            if random.random() < 0.3:  # 30% chance of having a sponsor
+                OrphanSponsor.objects.create(
+                    orphan=orphan,
+                    donor=random.choice(donors),
+                    is_active=random.choice([True, False])
+                )
+
+    def create_orphan_updates(self, orphans):
+        for orphan in orphans:
+            for _ in range(random.randint(1, 3)):
+                OrphanUpdate.objects.create(
+                    orphan=orphan,
+                    title=fake.catch_phrase(),
+                    note=fake.text()
+                )
+
+    def save_user_credentials(self, users_data):
+        with open('user_credentials.json', 'w') as f:
+            json.dump(users_data, f, indent=2)
+
+
+
+--- FILE: api\urls.py ---
+
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from payment import views as payment_views
+from donations import views as donation_views
+from logistics import views as logistics_views
+from orphan import views as orphan_views
+from orphanages import views as orphanage_views
+from matcher import views as matcher_views
+from volunteers import views as volunteer_views
+from accounts import views
+from campaigns import views as campaign_views
+router = DefaultRouter()
+router.register(r'payments', payment_views.PaymentViewSet, basename='payment')
+
+urlpatterns = [
+    path('', include(router.urls)),
+    # Auth URLs
+    path('auth/login/', views.LoginView.as_view()), #DONE
+    path('auth/logout/', views.LogoutView.as_view({'post': 'logout'})), #DONE
+    path('users/list/', views.UserListView.as_view()), #DONE
+    path('users/create/', views.UserCreateView.as_view()), #DONE
+    path('users/me/', views.UserDetailView.as_view()), #DONE
+    path('users/me/update/', views.UserUpdateView.as_view()), #DONE
+    path('users/me/delete/', views.UserDeleteView.as_view()), #DONE
+
+    # Donations URLs
+    path('donations/', donation_views.DonationCreateView.as_view()), #NOT USED
+    path('donations/general/', donation_views.GeneralDonationCreateView.as_view()), #DONE
+    path('donations/education/', donation_views.EducationDonationCreateView.as_view()), #DONE
+    path('donations/medical/', donation_views.MedicalDonationCreateView.as_view()), #DONE
+    path('donations/money/', donation_views.MoneyDonationCreateView.as_view()), #DONE
+    path('donations/donor/', donation_views.DonorDonationsListView.as_view()), #DONE
+    path('donations/orphan/<int:orphan_id>/', donation_views.OrphanDonationsListView.as_view()), #DONE
+    path('donations/<int:pk>/report/', donation_views.DonationReportCreateView.as_view()), #DONE    
+    path('donations/<int:pk>/reports/', donation_views.DonationReportListView.as_view()), #DONE
+    path('donations/donor/reports/', donation_views.DonorReportsListView.as_view()), #DONE
+    path('donations/<int:pk>/status/', donation_views.DonationStatusUpdateView.as_view()), #DONE
+
+    # Logistics URLs
+    path('deliveries/create/', logistics_views.DeliveryCreateView.as_view()), #DONE
+    path('deliveries/', logistics_views.DeliveryListView.as_view()), #DONE
+    path('deliveries/donor/', logistics_views.DonorDeliveryListView.as_view()), #DONE
+    path('deliveries/<int:pk>/status/', logistics_views.DeliveryStatusUpdateView.as_view()), #DONE
+
+    # Orphan URLs
+    path('orphans/', orphan_views.OrphanCreateView.as_view()), #DONE
+    path('orphans/<int:orphan_id>/updates/', orphan_views.OrphanUpdateCreateView.as_view()), #DONE
+    path('orphans/<int:orphan_id>/updates/list/', orphan_views.OrphanUpdateListView.as_view()), #DONE
+    path('orphans/<int:pk>/', orphan_views.OrphanDestroyView.as_view()), #NOT USED
+    path('orphans/sponsor/', orphan_views.OrphanSponsorCreateView.as_view()), #DONE
+    path('orphans/sponsor/cancel/', orphan_views.OrphanSponsorCancelView.as_view()), #DONE
+    path('orphans/sponsors/', orphan_views.OrphanSponsorListView.as_view()), #DONE
+
+    # Orphanage URLs
+    path('orphanages/', orphanage_views.OrphanageListView.as_view()), #DONE
+    path('orphanages/<int:pk>/', orphanage_views.OrphanageUpdateView.as_view()), #DONE
+    path('orphanages/create/', orphanage_views.OrphanageCreateView.as_view()), #DONE
+    path('orphanages/<int:pk>/reviews/', orphanage_views.OrphanageReviewsView.as_view()), #DONE
+    path('orphanages/<int:pk>/reviews/create/', orphanage_views.OrphanageReviewCreateView.as_view()),#DONE
+    path('orphanages/<int:pk>/verify/', orphanage_views.OrphanageVerificationView.as_view()), #DONE
+    path('orphanages/need-requests/', orphanage_views.OrphanageNeedRequestListView.as_view()), #DONE
+    path('orphanages/need-requests/create/', orphanage_views.OrphanageNeedRequestCreateView.as_view()), #DONE
+    path('orphanages/need-requests/list/', orphanage_views.OrphanageNeedRequestListView.as_view()), #DONE
+    path('orphanages/need-requests/<int:pk>/', orphanage_views.OrphanageNeedRequestUpdateView.as_view()), #DONE
+    # Matcher URLs
+    path('matcher/', matcher_views.MatcherView.as_view()), #DONE
+
+    # Volunteer URLs
+    path('volunteers/', volunteer_views.VolunteerCreateView.as_view()),
+    path('volunteers/<int:pk>/', volunteer_views.VolunteerUpdateView.as_view()),
+
+    path('volunteer-offers/', volunteer_views.VolunteerOfferRequestListView.as_view()),
+    path('volunteer-offers/create/', volunteer_views.VolunteerOfferRequestCreateView.as_view()),
+    path('volunteer-offers/<int:pk>/', volunteer_views.VolunteerOfferRequestUpdateView.as_view()),
+    path('volunteer-offers/my-requests/', volunteer_views.MyVolunteerOfferRequestsView.as_view()),
+
+    # Campaign URLs
+    path('campaigns/', campaign_views.CampaignCreateView.as_view()),
+    path('campaigns/<int:pk>/close/', campaign_views.CampaignCloseView.as_view()),
+    path('campaigns/open/', campaign_views.OpenCampaignsListView.as_view()),
+    path('campaigns/<int:pk>/donations/', campaign_views.CampaignDonationsListView.as_view()),
+]
+
+
+--- FILE: campaigns\admin.py ---
+
+from django.contrib import admin
+from .models import Campaign, CampaignCategory
+
+
+@admin.register(Campaign)
+class CampaignAdmin(admin.ModelAdmin):
+    list_display   = (
+        "title", "category", "goal_amount",
+        "start", "end", "is_open", "created_at",
+    )
+    list_filter    = ("category", "is_open", "start")
+    search_fields  = ("title",)
+    readonly_fields = ("created_at",)
+    ordering       = ("-start",)
+
+    fieldsets = (
+        (None, {"fields": ("title", "category", "goal_amount")}),
+        ("Timeline", {"fields": ("start", "end", "is_open")}),
+        ("System",   {"fields": ("created_at",)}),
+    )
+
+
+
+--- FILE: campaigns\apps.py ---
+
+from django.apps import AppConfig
+
+
+class CampaignsConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'campaigns'
+
+
+
+--- FILE: campaigns\models.py ---
+
+from django.db import models
+
+class CampaignCategory(models.TextChoices):
+    GENERAL    = "general",    "General"
+    EMERGENCY  = "emergency",  "Emergency"
+
+class Campaign(models.Model):
+    title        = models.CharField(max_length=120)
+    category     = models.CharField(max_length=20, choices=CampaignCategory.choices)
+    goal_amount  = models.DecimalField(max_digits=10, decimal_places=2)
+    start        = models.DateField()
+    end          = models.DateField(null=True, blank=True)
+    is_open      = models.BooleanField(default=True)         
+    created_at   = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-start"]
+
+    def __str__(self):
+        return self.title
+
+
+--- FILE: campaigns\serializers.py ---
+
+from rest_framework import serializers
+from donations.models import Campaign
+
+
+class CampaignSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = Campaign
+        fields = ("id", "title", "goal_amount", "start", "end", "is_open")
+
+
+--- FILE: campaigns\tasks.py ---
+
+from celery import shared_task
+from django.core.mail import send_mass_mail, send_mail
+from django.conf import settings
+from .models import Campaign, CampaignCategory
+from accounts.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+import os
+
+# Flag to check if we're in seeding mode
+IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
+
+@shared_task
+def notify_new_emergency_campaign(campaign_id):
+    if IS_SEEDING:
+        return
+    try:
+        campaign = Campaign.objects.get(id=campaign_id)
+        if campaign.category != CampaignCategory.EMERGENCY:
+            return "Not an emergency campaign"
+
+        # Get all users' emails
+        all_users = User.objects.all().values_list("email", flat=True)
+        
+        subject = f"Urgent: New Emergency Campaign - {campaign.title}"
+        body = (
+            f"Dear HopeConnect Community,\n\n"
+            f"We want to bring your immediate attention to a new emergency campaign "
+            f"that has just been launched on our platform.\n\n"
+            f"Campaign Details:\n"
+            f"Title: {campaign.title}\n"
+            f"Goal: {campaign.goal_amount} {getattr(settings, 'STRIPE_CURRENCY', 'USD').upper()}\n"
+            f"Start Date: {campaign.start}\n\n"
+            f"This is an emergency campaign that requires urgent support from our community. "
+            f"Your contribution can make a significant difference in this time of need.\n\n"
+            f"To contribute to this cause, please visit your HopeConnect dashboard.\n\n"
+            f"Thank you for your continued support and generosity.\n\n"
+            f"Best regards,\nThe HopeConnect Team"
+        )
+
+        messages = [
+            (subject, body, settings.DEFAULT_FROM_EMAIL, [email])
+            for email in all_users
+        ]
+        print("The Following Emails are being sent: ", messages)
+        send_mass_mail(messages, fail_silently=True)
+        return f"Emergency campaign notification sent to {len(messages)} users"
+    
+    except Campaign.DoesNotExist:
+        return "Campaign not found"
+
+@receiver(post_save, sender=Campaign)
+def campaign_post_save(sender, instance, created, **kwargs):
+    # Skip sending emails during seeding
+    if IS_SEEDING:
+        return
+    try:
+        if created and instance.campaign_type == 'EMERGENCY':
+            notify_new_emergency_campaign.delay(instance.id)
+    except Exception as e:
+        raise e
+
+
+
+
+--- FILE: campaigns\tests.py ---
+
+from django.test import TestCase
+
+# Create your tests here.
+
+
+
+--- FILE: campaigns\views.py ---
+
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework.response import Response
+from .models import Campaign
+from donations.models import Donation
+from .serializers import CampaignSerializer
+from donations.serializers import DonationSerializer
+
+# URL: /api/campaigns/
+# Method: POST
+# Only admin can create campaigns
+class CampaignCreateView(generics.CreateAPIView):
+    queryset = Campaign.objects.all()
+    serializer_class = CampaignSerializer
+    permission_classes = [IsAdminUser]
+
+# URL: /api/campaigns/<id>/close/
+# Method: PATCH
+# Only admin can close campaigns
+class CampaignCloseView(generics.UpdateAPIView):
+    queryset = Campaign.objects.all()
+    serializer_class = CampaignSerializer
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, *args, **kwargs):
+        campaign = self.get_object()
+        campaign.is_open = False
+        campaign.save()
+        serializer = self.get_serializer(campaign)
+        return Response(serializer.data)
+
+# URL: /api/campaigns/open/
+# Method: GET
+# Anyone can view open campaigns
+class OpenCampaignsListView(generics.ListAPIView):
+    serializer_class = CampaignSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return Campaign.objects.filter(is_open=True)
+
+
+# URL: /api/campaigns/<id>/donations/
+# Method: GET
+# Admin can view donations for a campaign
+class CampaignDonationsListView(generics.ListAPIView):
+    serializer_class = DonationSerializer
+    permission_classes = [IsAdminUser]
+
+    def get_queryset(self):
+        campaign = self.get_object()
+        return Donation.objects.filter(campaign=campaign)
+
+
+
+--- FILE: campaigns\__init__.py ---
+
+
+
+
+--- FILE: donations\admin.py ---
+
+
+
+
+--- FILE: donations\apps.py ---
+
+from django.apps import AppConfig
+
+
+class DonationsConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'donations'
+
+
+--- FILE: donations\models.py ---
+
+from django.db import models
+from accounts.models import User
+from orphan.models import Orphan
+from campaigns.models import Campaign
+
+
+class DonationStatus(models.TextChoices):
+    PENDING    = "PENDING",    "Pending"
+    COMPLETED  = "COMPLETED",  "Completed"
+    FAILED     = "FAILED",     "Failed"
+    REFUNDED   = "REFUNDED",   "Refunded"
+
+
+class DonationCategory(models.TextChoices):
+    GENERAL   = "GENERAL",   "General"
+    EDUCATION = "EDUCATION", "Education"
+    MEDICAL   = "MEDICAL",   "Medical"
+    MONEY = "MONEY","Money"
+
+class DonationType(models.TextChoices):
+    ORPHAN = "ORPHAN", "Orphan"
+    CAMPAIGN = "CAMPAIGN", "Campaign"
+
+
+
+class Donation(models.Model):
+    donor = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name="donations",
+        limit_choices_to={"role": "DONOR"}
+    )
+    orphan = models.ForeignKey(
+        Orphan,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="donations"
+    )    
+    campaign = models.ForeignKey(
+        Campaign,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="donations"
+    )
+    platform_fee = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+    donation_category = models.CharField(
+        max_length=20,
+        choices=DonationCategory.choices,
+        default=DonationCategory.MONEY
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=DonationStatus.choices,
+        default=DonationStatus.PENDING
+        )
+    donation_type = models.CharField(
+        max_length=20,
+        choices=DonationType.choices,
+        default=DonationType.ORPHAN
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return f"{self.donation_type.title()} Donation by {self.donor}"
+
+
+class GeneralDonation(Donation):
+    description = models.TextField(blank=True)
+    material = models.CharField(max_length=255, blank=True)
+    quantity = models.PositiveIntegerField(default=1)
+    need_transportation = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        self.donation_category = DonationCategory.GENERAL
+        if self.orphan:
+            self.campaign = None
+            self.donation_type = DonationType.ORPHAN
+        elif self.campaign:
+            self.orphan = None
+            self.donation_type = DonationType.CAMPAIGN
+        super().save(*args, **kwargs)
+
+
+class EducationDonation(Donation):
+    field = models.CharField(max_length=255, blank=True)
+    course = models.CharField(max_length=255, blank=True)
+    course_duration = models.PositiveIntegerField(default=1)
+    hours_per_week = models.PositiveIntegerField(default=1)
+
+    def save(self, *args, **kwargs):
+        self.donation_category = DonationCategory.EDUCATION
+        super().save(*args, **kwargs)
+
+
+class MedicalDonation(Donation):
+    supply_type = models.CharField(max_length=255, blank=True)
+    quantity = models.PositiveIntegerField(default=1)
+    description = models.TextField(blank=True)
+
+    def save(self, *args, **kwargs):
+        self.donation_type = DonationCategory.MEDICAL
+        self.donation_category = DonationCategory.MEDICAL
+        super().save(*args, **kwargs)
+
+
+class MoneyDonation(Donation):
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    pay_for = models.CharField(max_length=255, blank=True)
+    currency = models.CharField(max_length=3, default="USD")
+    payment_intent_id = models.CharField(max_length=255, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.donation_type = DonationCategory.MONEY
+        self.donation_category = DonationCategory.MONEY
+        super().save(*args, **kwargs)
+
+class DonationReport(models.Model):
+    donation = models.ForeignKey(Donation, on_delete=models.CASCADE, related_name="reports")
+    report = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+
+
+    
+
+
+
+
+
+
+--- FILE: donations\serializers.py ---
+
+from rest_framework import serializers
+from .models import (
+    Donation, DonationReport, GeneralDonation, EducationDonation, 
+    MedicalDonation, MoneyDonation
+)
+
+
+class DonationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Donation
+        fields = [
+            'id', 'donor', 'orphan', 'campaign', 'platform_fee',
+            'donation_category', 'donation_type', 'status', 'created_at'
+        ]
+        read_only_fields = ['donor', 'status']
+
+
+class GeneralDonationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GeneralDonation
+        fields = [
+            'id', 'donor', 'orphan', 'campaign', 'platform_fee',
+            'donation_category', 'donation_type', 'status', 'created_at',
+            'description', 'material', 'quantity', 'need_transportation'
+        ]
+        read_only_fields = ['donor', 'status', 'donation_category', 'donation_type']
+
+
+class EducationDonationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EducationDonation
+        fields = [
+            'id', 'donor', 'orphan', 'campaign', 'platform_fee',
+            'donation_category', 'donation_type', 'status', 'created_at',
+            'field', 'course', 'course_duration', 'hours_per_week'
+        ]
+        read_only_fields = ['donor', 'status', 'donation_category', 'donation_type']
+
+
+class MedicalDonationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MedicalDonation
+        fields = [
+            'id', 'donor', 'orphan', 'campaign', 'platform_fee',
+            'donation_category', 'donation_type', 'status', 'created_at',
+            'supply_type', 'quantity', 'description'
+        ]
+        read_only_fields = ['donor', 'status', 'donation_category', 'donation_type']
+
+
+class MoneyDonationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MoneyDonation
+        fields = [
+            'id', 'donor', 'orphan', 'campaign', 'platform_fee',
+            'donation_category', 'donation_type', 'status', 'created_at',
+            'amount', 'currency', 'payment_intent_id', 'pay_for'
+        ]
+        read_only_fields = ['donor', 'status', 'donation_category', 'donation_  type', 'payment_intent_id']
+
+
+class DonationReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DonationReport
+        fields = ['id', 'donation', 'report', 'created_at']
+        read_only_fields = ['donation', 'created_at']
+        
+
+
+
+
+
+--- FILE: donations\tasks.py ---
+
+from django.core.mail import send_mail
+from django.conf import settings
+from celery import shared_task
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .models import Donation, DonationReport
+import os
+
+# Flag to check if we're in seeding mode
+IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
+
+@shared_task
+def send_donation_confirmation_email(donation_id):
+    if IS_SEEDING:
+        return
+    try:
+        donation = Donation.objects.get(id=donation_id)
+        
+        subject = 'Thank you for your donation!'
+        
+        if donation.donation_type == 'ORPHAN':
+            message = f"""
+Dear {donation.donor.get_full_name()},
+
+Thank you for your generous donation to help {donation.orphan.name}. Your support means the world to us and will make a real difference in their life.
+
+Donation Details:
+- Category: {donation.get_donation_category_display()}
+- Status: {donation.get_status_display()}
+- Date: {donation.created_at.strftime('%B %d, %Y')}
+
+We will keep you updated on how your donation is helping. Thank you again for your kindness and generosity.
+
+Best regards,
+The HopeConnect Support Team
+            """
+        else:
+            message = f"""
+Dear {donation.donor.get_full_name()},
+
+Thank you for your generous donation to our {donation.get_donation_type_display()} campaign. Your support helps us make a difference in children's lives.
+
+Donation Details:
+- Category: {donation.get_donation_category_display()}
+- Status: {donation.get_status_display()} 
+- Date: {donation.created_at.strftime('%B %d, %Y')}
+
+We will keep you updated on the impact of your donation. Thank you again for your support.
+
+Best regards,
+The HopeConnect Support Team
+            """
+
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [donation.donor.email],
+            fail_silently=False,
+        )
+        print("Donation Confirmation Email Sent to: ", donation.donor.email)
+    except Donation.DoesNotExist:
+        pass
+
+@shared_task 
+def send_donation_status_update_email(donation_id):
+    if IS_SEEDING:
+        return
+    try:
+        donation = Donation.objects.get(id=donation_id)
+
+        subject = 'Your Donation Status Has Been Updated'
+        message = f"""
+Dear {donation.donor.get_full_name()},
+
+We wanted to let you know that the status of your donation has been updated.
+
+New Status: {donation.get_status_display()}
+
+Donation Details:
+- Category: {donation.get_donation_category_display()}
+- Type: {donation.get_donation_type_display()}
+- Date: {donation.created_at.strftime('%B %d, %Y')}
+
+Thank you again for your generous support. If you have any questions, please don't hesitate to contact us.
+
+Best regards,
+The HopeConnect Support Team
+        """
+
+        send_mail(
+            subject,
+            message, 
+            settings.DEFAULT_FROM_EMAIL,
+            [donation.donor.email],
+            fail_silently=False,
+        )
+        print("Donation Status Update Email Sent to: ", donation.donor.email)
+    except Donation.DoesNotExist:
+        pass
+
+@receiver(post_save, sender=Donation)
+def donation_post_save(sender, instance, created, **kwargs):
+    # Skip sending emails during seeding
+    if IS_SEEDING:
+        return
+        
+    try:
+        if created:
+            send_donation_confirmation_email.delay(instance.id)
+        else:
+            # Only send status update email if status field was changed
+            if instance.tracker.has_changed('status'):
+                send_donation_status_update_email.delay(instance.id)
+    except Exception:
+        # If Celery is not running, just skip sending the email
+        pass
+
+@shared_task
+def send_donation_report_email(report_id):
+    if IS_SEEDING:
+        return
+    try:
+        report = DonationReport.objects.get(id=report_id)
+        donation = report.donation
+
+        subject = 'New Report for Your Donation'
+        message = f"""
+Dear {donation.donor.get_full_name()},
+
+A new report has been created for your donation.
+
+Donation Details:
+- Category: {donation.get_donation_category_display()}
+- Type: {donation.get_donation_type_display()} 
+- Date: {donation.created_at.strftime('%B %d, %Y')}
+
+Report:
+{report.report}
+
+Thank you for your continued support.
+
+Best regards,
+The HopeConnect Support Team
+        """
+
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [donation.donor.email],
+            fail_silently=False,
+        )
+        print("Donation Report Email Sent to: ", donation.donor.email)          
+    except DonationReport.DoesNotExist:
+        pass
+
+@receiver(post_save, sender=DonationReport)
+def donation_report_post_save(sender, instance, created, **kwargs):
+    # Skip sending emails during seeding
+    if IS_SEEDING:
+        return
+                
+    try:
+        if created:
+            send_donation_report_email.delay(instance.id)
+    except Exception:
+        # If Celery is not running, just skip sending the email
+        pass
+
+
+--- FILE: donations\tests.py ---
+
+from django.test import TestCase
+
+# Create your tests here.
+
+
+
+--- FILE: donations\views.py ---
+
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
+from accounts.permissions import IsDonor, OrphanageOrAdminPermission, IsAdmin
+from orphan.models import Orphan
+from .models import (
+    Donation, DonationReport, GeneralDonation, EducationDonation,
+    MedicalDonation, MoneyDonation, DonationType
+)
+from .serializers import (
+    DonationReportSerializer, DonationSerializer, GeneralDonationSerializer,
+    EducationDonationSerializer, MedicalDonationSerializer,
+    MoneyDonationSerializer
+)
+
+# POST /api/donations/
+class DonationCreateView(generics.CreateAPIView):
+    serializer_class = DonationSerializer
+    permission_classes = [IsDonor & permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(donor=self.request.user)
+
+# POST /api/donations/general/
+class GeneralDonationCreateView(generics.CreateAPIView):
+    serializer_class = GeneralDonationSerializer
+    permission_classes = [IsDonor & permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):    
+        serializer.save(donor=self.request.user)
+
+
+# POST /api/donations/education/
+class EducationDonationCreateView(generics.CreateAPIView):
+    serializer_class = EducationDonationSerializer
+    permission_classes = [IsDonor & permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+
+        
+        serializer.save(donor=self.request.user)
+
+
+# POST /api/donations/medical/
+class MedicalDonationCreateView(generics.CreateAPIView):
+    serializer_class = MedicalDonationSerializer
+    permission_classes = [IsDonor & permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(donor=self.request.user)
+
+
+# POST /api/donations/money/
+class MoneyDonationCreateView(generics.CreateAPIView):
+    serializer_class = MoneyDonationSerializer
+    permission_classes = [IsDonor & permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(donor=self.request.user)
+
+
+# GET /api/donations/donor/
+class DonorDonationsListView(generics.ListAPIView):
+    serializer_class = DonationSerializer
+    permission_classes = [IsDonor & permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Donation.objects.filter(donor=self.request.user)
+
+# GET /api/donations/orphan/<orphan_id>/
+class OrphanDonationsListView(generics.ListAPIView):
+    serializer_class = DonationSerializer
+    permission_classes = [OrphanageOrAdminPermission]
+
+    def get_queryset(self):
+        orphan = get_object_or_404(Orphan, id=self.kwargs['orphan_id'])
+        self.check_object_permissions(self.request, orphan)
+        return Donation.objects.filter(orphan=orphan)
+
+
+# POST /api/donations/<pk>/report/
+class DonationReportCreateView(generics.CreateAPIView):
+    serializer_class = DonationReportSerializer
+    permission_classes = [OrphanageOrAdminPermission]
+
+    def perform_create(self, serializer):
+        donation = get_object_or_404(Donation, id=self.kwargs['pk'])
+        self.check_object_permissions(self.request, donation)
+        serializer.save(donation=donation)
+
+
+# GET /api/donations/<pk>/report/
+class DonationReportListView(generics.ListAPIView):
+    serializer_class = DonationReportSerializer
+    permission_classes = [IsDonor & permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        donation = get_object_or_404(Donation, id=self.kwargs['pk'])
+        self.check_object_permissions(self.request, donation)
+        return DonationReport.objects.filter(donation=donation)
+
+# get reports for for a specific donor
+# GET /api/donations/donor/reports/
+class DonorReportsListView(generics.ListAPIView):
+    serializer_class = DonationReportSerializer
+    permission_classes = [IsDonor & permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return DonationReport.objects.filter(donation__donor=self.request.user)
+    
+# PATCH /api/donations/<pk>/status/
+class DonationStatusUpdateView(generics.UpdateAPIView):
+    queryset = Donation.objects.all()
+    serializer_class = DonationSerializer
+    permission_classes = [IsAdmin]
+
+    def update(self, request, *args, **kwargs):
+        donation = self.get_object()
+        donation.status = request.data.get('status')
+        donation.save()
+        return Response(self.get_serializer(donation).data)
+
+
+
+
+
+
+--- FILE: donations\__init__.py ---
+
+
+
+
+--- FILE: hopeconnect\asgi.py ---
+
+"""
+ASGI config for hopeconnect project.
+
+It exposes the ASGI callable as a module-level variable named ``application``.
+
+For more information on this file, see
+https://docs.djangoproject.com/en/5.2/howto/deployment/asgi/
+"""
+
+import os, django
+from channels.routing import ProtocolTypeRouter, URLRouter
+from django.core.asgi import get_asgi_application
+from orphanages.routing import websocket_urlpatterns   # new
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "hopeconnect.settings")
+django.setup()
+
+application = ProtocolTypeRouter({
+    "http":  get_asgi_application(),
+    "websocket": URLRouter(websocket_urlpatterns),
+})
+
+
+
+--- FILE: hopeconnect\celery.py ---
+
+import os
+from celery import Celery
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hopeconnect.settings')
+
+app = Celery('hopeconnect')
+app.config_from_object('django.conf:settings', namespace='CELERY')
+app.autodiscover_tasks()
+
+
+
+--- FILE: hopeconnect\settings.py ---
+
+"""
+Django settings for hopeconnect project.
+
+Generated by 'django-admin startproject' using Django 5.2.1.
+
+For more information on this file, see
+https://docs.djangoproject.com/en/5.2/topics/settings/
+
+For the full list of settings and their values, see
+https://docs.djangoproject.com/en/5.2/ref/settings/
+"""
+
+from pathlib import Path
+from pathlib import Path
+import os, dj_database_url
+from dotenv import load_dotenv
+from celery.schedules import crontab
+from decimal import Decimal
+
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-adwz8^a_azb_j1)s@9uwf3v_it_#zn#u%f!2we3)+)a@o!vn!9'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = []
+
+
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django_extensions',
+    'rest_framework',
+    "drf_spectacular",           
+    "drf_spectacular_sidecar",
+    'accounts',
+    'campaigns',
+    'donations',
+    'logistics',
+    'orphanages',
+    'orphan',
+    'volunteers',
+    'channels',
+    'payment',
+    'matcher',
+    'debug_toolbar',
+
+]
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+
+}
+AUTH_USER_MODEL = "accounts.User"
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+
+ROOT_URLCONF = 'hopeconnect.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'hopeconnect.wsgi.application'
+
+
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
+DATABASES = {
+    "default": dj_database_url.parse(
+        f"mysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}",
+        engine="django.db.backends.mysql",
+        conn_max_age=600,
+    )
+}
+
+
+# Password validation
+# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+
+# Internationalization
+# https://docs.djangoproject.com/en/5.2/topics/i18n/
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_TZ = True
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.2/howto/static-files/
+
+STATIC_URL = 'static/'
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "HopeConnect API",
+    "DESCRIPTION": "Backend for orphan sponsorship, donations and logistics.",
+    "VERSION": "0.1.0",
+    "SERVE_INCLUDE_SCHEMA": False,          # schema served at /schema/
+    # reusable error component so every 4xx/5xx is uniform
+    "COMPONENT_SPLIT_REQUEST": True,
+    "COMPONENTS": {
+        "schemas": {
+            "ErrorResponse": {
+                "type": "object",
+                "properties": {
+                    "status": {"type": "string", "example": "error"},
+                    "code":   {"type": "integer", "example": 400},
+                    "detail": {"type": "string", "example": "Invalid input"},
+                    "errors": {"type": "object"},
+                },
+                "required": ["status", "code", "detail"],
+            }
+        }
+    },
+    # automatically attach {400: ErrorResponse, 401: …} to every op
+    "DEFAULT_STATUS_CODES": [400, 401, 403, 404, 500],
+}
+
+CELERY_BEAT_SCHEDULE = {
+    "run-semantic-matching": {
+        "task": "matcher.tasks.run_semantic_matching",
+        "schedule": crontab(hour=0, minute=1),
+    },
+}
+
+ASGI_APPLICATION = "hopeconnect.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)]
+        },
+    }
+}
+
+
+load_dotenv()
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+
+INTERNAL_IPS = ["127.0.0.1"]
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),    
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),       
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
+
+
+--- FILE: hopeconnect\urls.py ---
+
+"""
+URL configuration for hopeconnect project.
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/5.2/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+from django.contrib import admin
+from django.urls import include, path
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from django.conf import settings
+
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("api/",    include("api.urls")),          
+]
+
+if settings.DEBUG:
+    urlpatterns += [
+        path("__debug__/", include("debug_toolbar.urls")),
+    ]
+
+
+
+--- FILE: hopeconnect\wsgi.py ---
+
+"""
+WSGI config for hopeconnect project.
+
+It exposes the WSGI callable as a module-level variable named ``application``.
+
+For more information on this file, see
+https://docs.djangoproject.com/en/5.2/howto/deployment/wsgi/
+"""
+
+import os
+
+from django.core.wsgi import get_wsgi_application
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hopeconnect.settings')
+
+application = get_wsgi_application()
+
+
+
+--- FILE: hopeconnect\__init__.py ---
+
+from .celery import app as celery_app
+
+__all__ = ['celery_app']
+
+
+
+--- FILE: logistics\admin.py ---
+
+
+
+
+--- FILE: logistics\apps.py ---
+
+from django.apps import AppConfig
+
+
+class LogisticsConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'logistics'
+    def ready(self):
+        import logistics.tasks 
+
+
+
+--- FILE: logistics\models.py ---
+
+from django.db import models
+from donations.models import Donation
+
+class DeliveryStatus(models.TextChoices):
+    PENDING = "pending"
+    IN_TRANSIT = "in_transit"
+    DELIVERED = "delivered"
+    
+class Location(models.Model):
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+
+
+class Delivery(models.Model):
+    donation = models.OneToOneField(Donation, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=DeliveryStatus.choices, default=DeliveryStatus.PENDING)
+    pickup_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="pickup_deliveries",null=True, blank=True)
+    dropOff_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="dropOff_deliveries",null=True, blank=True)
+    current_location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="current_deliveries",null=True, blank=True)
+    pickup_date = models.DateField(null=True, blank=True)
+    dropOff_date = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.donation.donor.name} - {self.donation.orphan.name}"
+
+
+
+--- FILE: logistics\serializers.py ---
+
+from rest_framework import serializers
+from .models import Delivery, Location
+
+class DeliverySerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = Delivery
+        fields = "__all__"
+        read_only_fields = ("id", "created_at", "updated_at")
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = "__all__"
+        read_only_fields = ("id")
+
+
+
+
+
+--- FILE: logistics\tasks.py ---
+
+from django.core.mail import send_mail
+from django.conf import settings
+from celery import shared_task
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .models import Delivery
+import os
+
+# Flag to check if we're in seeding mode
+IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
+
+@shared_task
+def send_delivery_creation_email(delivery_id):
+    if IS_SEEDING:
+        return
+    try:
+        delivery = Delivery.objects.get(id=delivery_id)
+        
+        subject = 'Delivery Created for Your Donation'
+        message = f"""
+Dear {delivery.donation.donor.get_full_name()},
+
+A delivery has been created for your donation. Here are the delivery details:
+
+Delivery Status: {delivery.get_status_display()}
+Pickup Date: {delivery.pickup_date or 'Not set'}
+Dropoff Date: {delivery.dropOff_date or 'Not set'}
+
+We will keep you updated on the delivery status. Thank you for your donation.
+
+Best regards,
+The HopeConnect Support Team
+        """
+
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [delivery.donation.donor.email],
+            fail_silently=False,
+        )
+        print("Delivery Creation Email Sent to: ", delivery.donation.donor.email)
+    except Delivery.DoesNotExist:
+        pass
+
+@shared_task
+def send_delivery_status_update_email(delivery_id):
+    if IS_SEEDING:
+        return
+    try:
+        delivery = Delivery.objects.get(id=delivery_id)
+
+        subject = 'Delivery Status Updated'
+        message = f"""
+Dear {delivery.donation.donor.get_full_name()},
+
+The status of your donation delivery has been updated.
+
+New Delivery Status: {delivery.get_status_display()}
+Pickup Date: {delivery.pickup_date or 'Not set'}
+Dropoff Date: {delivery.dropOff_date or 'Not set'}
+
+Thank you for your donation.
+
+Best regards,
+The HopeConnect Support Team
+        """
+
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [delivery.donation.donor.email],
+            fail_silently=False,
+        )
+        print("Delivery Status Update Email Sent to: ", delivery.donation.donor.email)
+    except Delivery.DoesNotExist:
+        pass
+
+@shared_task
+def send_delivery_location_update_email(delivery_id):
+    if IS_SEEDING:
+        return
+    try:
+        delivery = Delivery.objects.get(id=delivery_id)
+
+        subject = 'Delivery Location Updated'
+        message = f"""
+Dear {delivery.donation.donor.get_full_name()},
+
+The location of your donation delivery has been updated.    
+
+Current Location: {delivery.current_location.latitude}, {delivery.current_location.longitude}
+
+Thank you for your donation.
+
+Best regards,
+The HopeConnect Support Team
+        """
+
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [delivery.donation.donor.email],    
+            fail_silently=False,
+        )
+        print("Delivery Status Update Email Sent to: ", delivery.donation.donor.email)
+    except Delivery.DoesNotExist:
+        pass
+
+@receiver(post_save, sender=Delivery)
+def delivery_post_save(sender, instance, created, **kwargs):
+    # Skip sending emails during seeding
+    if IS_SEEDING:
+        return        
+    try:
+        if created:
+            send_delivery_creation_email.delay(instance.id)
+        else:
+            if instance.tracker.has_changed('status'):
+                send_delivery_status_update_email.delay(instance.id)
+            if instance.tracker.has_changed('current_location'):
+                send_delivery_location_update_email.delay(instance.id)
+    except Exception as e:
+        raise e
+
+
+
+--- FILE: logistics\tests.py ---
+
+from django.test import TestCase
+
+# Create your tests here.
+
+
+
+--- FILE: logistics\views.py ---
+
+from rest_framework import generics
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from rest_framework import permissions
+from accounts.permissions import IsAdmin, IsLogistics, IsDonor
+from logistics.serializers import DeliverySerializer
+from .models import Delivery, Location, DeliveryStatus
+
+# POST /api/deliveries/create/
+class DeliveryCreateView(generics.CreateAPIView):
+    serializer_class = DeliverySerializer
+    permission_classes = [IsAdmin]
+
+    def create(self, request, *args, **kwargs):
+        # Create pickup location
+        pickup_data = request.data.pop('pickup_location')
+        pickup_location = Location.objects.create(**pickup_data)
+
+        # Create dropoff location 
+        dropoff_data = request.data.pop('dropoff_location')
+        dropoff_location = Location.objects.create(**dropoff_data)
+
+        # Create delivery with locations
+        delivery_data = request.data
+        delivery_data['pickup_location'] = pickup_location.id
+        delivery_data['dropoff_location'] = dropoff_location.id
+
+        # Create current location
+        current_location_data = request.data.pop('current_location')
+        current_location = Location.objects.create(**current_location_data)
+        delivery_data['current_location'] = current_location.id
+        
+        serializer = self.get_serializer(data=delivery_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        
+        return Response(serializer.data)
+
+# GET /api/deliveries/
+class DeliveryListView(generics.ListAPIView):
+    serializer_class = DeliverySerializer
+    permission_classes = [IsAdmin | IsLogistics]
+    queryset = Delivery.objects.all()
+
+# GET /api/deliveries/donor/
+class DonorDeliveryListView(generics.ListAPIView):
+    serializer_class = DeliverySerializer
+    permission_classes = [IsDonor & permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Delivery.objects.filter(donation__donor=self.request.user)
+
+# PATCH /api/deliveries/<pk>/status/
+class DeliveryStatusUpdateView(generics.UpdateAPIView):
+    queryset = Delivery.objects.all()
+    serializer_class = DeliverySerializer
+    permission_classes = [IsAdmin | IsLogistics]
+
+    def update(self, request, *args, **kwargs):
+        delivery = self.get_object()
+        status = request.data.get('status')
+        
+        if status not in DeliveryStatus.values:
+            return Response(
+                {"error": f"Invalid status. Must be one of: {DeliveryStatus.values}"}, 
+                status=400
+            )
+            
+        delivery.status = status
+        delivery.save()
+        return Response(self.get_serializer(delivery).data)
+
+
+
+--- FILE: logistics\__init__.py ---
+
+
+
+
+--- FILE: matcher\admin.py ---
+
+from django.contrib import admin
+
+# Register your models here.
+
+
+
+--- FILE: matcher\apps.py ---
+
+from django.apps import AppConfig
+
+
+class MatcherConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'matcher'
+
+
+
+--- FILE: matcher\embeddings.py ---
+
+from sentence_transformers import SentenceTransformer
+from django.conf import settings
+
+model = None
+
+_model = None
+def get_embedder():
+    global _model
+    if _model is None:
+        _model = SentenceTransformer("all-MiniLM-L6-v2")
+    return _model
+
+def embed_text(text: str):
+    model = get_embedder()
+    return model.encode([text], convert_to_numpy=True)[0]
+
+
+
+
+--- FILE: matcher\models.py ---
+
+from django.db import models
+from orphanages.models import OrphanageNeedRequest
+from volunteers.models import VolunteerOfferRequest
+
+class Matcher(models.Model):
+    need_request = models.ForeignKey(OrphanageNeedRequest, on_delete=models.CASCADE)
+    volunteer_offer = models.ForeignKey(VolunteerOfferRequest, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+
+--- FILE: matcher\serializers.py ---
+
+from rest_framework import serializers
+from .models import Matcher
+
+class MatcherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Matcher
+        fields = ['id', 'need_request', 'volunteer_offer', 'created_at']
+
+
+
+--- FILE: matcher\tasks.py ---
+
+from venv import logger
+from celery import shared_task
+from django.db.models import Q
+from django.dispatch import receiver
+from scipy.spatial.distance import cosine
+from orphanages.models import OrphanageNeedRequest
+from volunteers.models import VolunteerOfferRequest
+from django.core.mail import send_mail
+from django.conf import settings
+from django.db.models.signals import post_save
+import os
+
+from .models import (
+    Matcher,
+    OfferStatus,
+    Match
+)
+SIMILARITY_THRESHOLD = 0.75
+
+# Flag to check if we're in seeding mode
+IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
+
+@shared_task
+def run_semantic_matching():
+    needs  = OrphanageNeedRequest.objects.filter(is_open=True, embedding__isnull=False)
+    offers = VolunteerOfferRequest.objects.filter(is_open=True, status=OfferStatus.OPEN, embedding__isnull=False)
+
+    for need in needs:
+        best_offer = None
+        best_score = 1.0  
+        for offer in offers:
+            if Matcher.objects.filter(need_request=need, volunteer_offer=offer).exists():
+                continue
+            dist = cosine(need.embedding, offer.embedding)
+            if dist < best_score:
+                best_score = dist
+                best_offer = offer
+
+        if best_offer and (1 - best_score) >= SIMILARITY_THRESHOLD:
+            Matcher.objects.create(
+                need_request=need,
+                volunteer_offer=best_offer
+            )
+            best_offer.status = OfferStatus.MATCHED
+            best_offer.is_open = False
+            best_offer.save(update_fields=["status", "is_open"])
+
+            need.is_open = False
+            need.save(update_fields=["is_open"])
+
+@shared_task
+def send_match_notification_email(match_id):
+    if IS_SEEDING:
+        return
+    try:
+        match = Match.objects.get(id=match_id)
+        
+        subject = 'New Match Found!'
+        message = f"""
+Dear {match.user.get_full_name()},
+
+We have found a potential match for you!
+
+Match Details:
+- Type: {match.get_match_type_display()}
+- Score: {match.score}
+- Created: {match.created_at.strftime('%B %d, %Y')}
+
+Please log in to your account to view the full details of this match.
+
+Best regards,
+The HopeConnect Support Team
+        """
+
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [match.user.email],
+            fail_silently=False,
+        )
+        print("Match Notification Email Sent to: ", match.user.email)
+    except Match.DoesNotExist:
+        pass
+
+@receiver(post_save, sender=Match)
+def match_post_save(sender, instance, created, **kwargs):
+    # Skip sending emails during seeding
+    if IS_SEEDING:
+        return
+
+    try:
+        if created:
+            send_match_notification_email.delay(instance.id)
+    except Exception as e:
+        raise e
+
+@receiver(post_save, sender=OrphanageNeedRequest)
+@receiver(post_save, sender=VolunteerOfferRequest)
+def kick_matcher(sender, **kwargs):
+    print("Kicking matcher")
+    run_semantic_matching.delay()
+
+
+--- FILE: matcher\tests.py ---
+
+from django.test import TestCase
+
+# Create your tests here.
+
+
+
+--- FILE: matcher\views.py ---
+
+from rest_framework import generics
+
+from accounts.models import Role
+from orphanages.models import Orphanage
+from .models import Matcher
+from .serializers import MatcherSerializer
+from accounts.permissions import IsAdmin, IsOrphanage, IsVolunteer
+from django.db.models import Q
+
+# GET /api/matcher/
+
+class MatcherView(generics.ListAPIView):
+    serializer_class = MatcherSerializer
+    permission_classes = [IsAdmin | IsOrphanage | IsVolunteer]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == Role.VOLUNTEER:
+            return Matcher.objects.filter(volunteer_offer__volunteer=user)
+        elif user.role == Role.ORPHANAGE:
+            orphanage = Orphanage.objects.get(manager=user)
+            return Matcher.objects.filter(need_request__orphanage=orphanage)
+        return Matcher.objects.none()
+
+
+
+--- FILE: matcher\__init__.py ---
+
+
+
+
+--- FILE: orphan\admin.py ---
+
+from django.contrib import admin
+
+from .models import Orphan, OrphanUpdate
+
+@admin.register(Orphan)
+class OrphanAdmin(admin.ModelAdmin):
+    list_display = ('name', 'orphanage', 'gender', 'birth_date', 'age')
+    list_filter = ('orphanage', 'gender')
+    search_fields = ('name', 'orphanage__name')
+    readonly_fields = ('age',)
+
+@admin.register(OrphanUpdate)
+class OrphanUpdateAdmin(admin.ModelAdmin):
+    list_display = ('orphan', 'title', 'created_at')
+    list_filter = ('orphan__orphanage', 'created_at')
+    search_fields = ('title', 'note', 'orphan__name')
+    date_hierarchy = 'created_at'
+
+
+
+
+--- FILE: orphan\apps.py ---
+
+from django.apps import AppConfig
+
+
+class OrphanConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'orphan'
+
+
+
+--- FILE: orphan\models.py ---
+
+from django.db import models
+from accounts.models import User
+from orphanages.models import Orphanage
+
+
+class OrphanGender(models.TextChoices):
+    MALE   = "M", "Male"
+    FEMALE = "F", "Female"
+
+class Orphan(models.Model):
+    orphanage = models.ForeignKey(Orphanage, on_delete=models.CASCADE, related_name="orphans")
+    national_id = models.CharField(max_length=14, unique=True)
+    name = models.CharField(max_length=120) 
+    gender = models.CharField(max_length=1, choices=OrphanGender.choices)
+    birth_date = models.DateField(null=True, blank=True)
+    health_info = models.TextField(blank=True)
+    education_status= models.CharField(max_length=255, blank=True)
+    photo = models.ImageField(upload_to="orphans/%Y/%m", null=True, blank=True)
+
+    def age(self):
+        from datetime import date
+        return date.today().year - self.birth_date.year if self.birth_date else None
+
+    def __str__(self):
+        return f"{self.name} ({self.orphanage})"
+
+class OrphanSponsor(models.Model):
+    orphan = models.ForeignKey(Orphan, on_delete=models.CASCADE, related_name="sponsors")
+    donor = models.ForeignKey(User, on_delete=models.PROTECT, related_name="sponsorships", limit_choices_to={"role": "DONOR"})
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ("orphan", "donor")
+
+class OrphanUpdate(models.Model):
+    orphan = models.ForeignKey("Orphan", on_delete=models.CASCADE, related_name="updates")
+    title = models.CharField(max_length=120)
+    photo = models.ImageField(upload_to="orphan_updates/", blank=True, null=True)
+    note = models.TextField(blank=True)
+    created_at  = models.DateTimeField(auto_now_add=True)
+
+
+--- FILE: orphan\serializers.py ---
+
+from rest_framework import serializers
+from .models import Orphan, OrphanSponsor, OrphanUpdate
+
+class OrphanSerializer(serializers.ModelSerializer):
+    age = serializers.IntegerField(read_only=True)
+    
+    class Meta:
+        model = Orphan
+        fields = ("id", "orphanage", "national_id", "name", "gender", "birth_date", 
+                 "health_info", "education_status", "photo", "age")
+        read_only_fields = ("id","national_id")
+
+class OrphanUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrphanUpdate
+        fields = ("id", "orphan", "title", "photo", "note", "created_at")
+        read_only_fields = ("id", "created_at")
+
+class OrphanSponsorSerializer(serializers.ModelSerializer):
+    orphan_details = OrphanSerializer(source='orphan', read_only=True)
+    
+    class Meta:
+        model = OrphanSponsor
+        fields = ['id', 'orphan', 'donor', 'is_active', 'created_at', 'orphan_details']
+        read_only_fields = ['donor', 'created_at']
+        
+    def validate(self, data):
+        orphan = data.get('orphan')
+        donor = self.context['request'].user
+        
+        if OrphanSponsor.objects.filter(orphan=orphan, donor=donor).exists():
+            raise serializers.ValidationError("You are already sponsoring this orphan")
+            
+        return data
+
+
+--- FILE: orphan\tasks.py ---
+
+from celery import shared_task
+from django.core.mail import send_mail
+from django.conf import settings
+from .models import OrphanUpdate
+from donations.models import Sponsorship
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+import os
+
+# Flag to check if we're in seeding mode
+IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
+
+@shared_task
+def notify_sponsor_of_update(update_id):
+    if IS_SEEDING:
+        return
+    try:
+        update = OrphanUpdate.objects.get(id=update_id)
+        
+        subject = f'Update about {update.orphan.name}'
+        message = f"""
+Dear {update.orphan.sponsor.get_full_name()},
+
+We have an update about {update.orphan.name}:
+
+{update.content}
+
+Update Details:
+- Type: {update.get_update_type_display()}
+- Date: {update.created_at.strftime('%B %d, %Y')}
+
+Thank you for your continued support.
+
+Best regards,
+The HopeConnect Support Team
+        """
+
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [update.orphan.sponsor.email],
+            fail_silently=False,
+        )
+        print("Sponsor Update Email Sent to: ", update.orphan.sponsor.email)
+    except OrphanUpdate.DoesNotExist:
+        pass
+
+@receiver(post_save, sender=OrphanUpdate)
+def orphan_update_post_save(sender, instance, created, **kwargs):
+    # Skip sending emails during seeding
+    if IS_SEEDING:
+        return
+        
+    try:
+        if created and instance.orphan.sponsor:
+            notify_sponsor_of_update.delay(instance.id)
+    except Exception as e:
+        raise e
+
+
+--- FILE: orphan\tests.py ---
+
+from django.test import TestCase
+
+# Create your tests here.
+
+
+
+--- FILE: orphan\views.py ---
+
+from rest_framework.response import Response
+from rest_framework import generics, permissions
+from rest_framework.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
+from .models import Orphan, OrphanUpdate, OrphanSponsor
+from orphanages.models import Orphanage
+from .serializers import OrphanSerializer, OrphanUpdateSerializer, OrphanSponsorSerializer
+from accounts.permissions import IsAdmin, IsOrphanage, IsDonor, OrphanageOrAdminPermission
+from rest_framework import status
+
+# POST /api/orphans/
+class OrphanCreateView(generics.CreateAPIView):
+    serializer_class = OrphanSerializer
+    permission_classes = [IsAdmin | IsOrphanage]
+
+    def perform_create(self, serializer):
+        if not Orphanage.objects.get(manager=self.request.user).is_public_approved:
+            raise ValidationError("Your orphanage is not approved yet")
+        if self.request.user.role == 'ORPHANAGE':
+            serializer.save(orphanage=Orphanage.objects.get(manager=self.request.user))
+        else:
+            serializer.save()
+
+# POST /api/orphans/<orphan_id>/updates/
+class OrphanUpdateCreateView(generics.CreateAPIView):
+    serializer_class = OrphanUpdateSerializer
+    permission_classes = [OrphanageOrAdminPermission]
+
+    def perform_create(self, serializer):
+        if not Orphanage.objects.get(manager=self.request.user).is_public_approved:
+            raise ValidationError("Your orphanage is not approved yet")
+        orphan = get_object_or_404(Orphan, id=self.kwargs['orphan_id'])
+        self.check_object_permissions(self.request, orphan)
+        serializer.save(orphan=orphan)
+
+# GET /api/orphans/<orphan_id>/updates/
+class OrphanUpdateListView(generics.ListAPIView):
+    serializer_class = OrphanUpdateSerializer
+    permission_classes = [permissions.IsAuthenticated &  (IsOrphanage | IsAdmin | IsDonor)]
+    def get_queryset(self):
+        if self.request.user.role == 'ORPHANAGE':
+            if not Orphanage.objects.get(manager=self.request.user).is_public_approved:
+                raise ValidationError("Your orphanage is not approved yet")
+        orphan = get_object_or_404(Orphan, id=self.kwargs['orphan_id']) 
+        return OrphanUpdate.objects.filter(orphan=orphan)
+
+# POST /api/orphans/sponsor/
+class OrphanSponsorCreateView(generics.CreateAPIView):
+    serializer_class = OrphanSponsorSerializer
+    permission_classes = [IsDonor & permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        orphan = get_object_or_404(Orphan, id=self.request.data.get('orphan'))
+        serializer.save(donor=self.request.user, orphan=orphan)
+
+# PATCH /api/orphans/sponsor/cancel/
+class OrphanSponsorCancelView(generics.GenericAPIView):
+    serializer_class = OrphanSponsorSerializer
+    permission_classes = [IsDonor & permissions.IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+        orphan_id = self.request.data.get("orphan")
+        sponsor = OrphanSponsor.objects.filter(donor=self.request.user, orphan_id=orphan_id).first()
+        if not sponsor:
+            raise ValidationError("You are not sponsoring this orphan.")
+        sponsor.is_active = False
+        sponsor.save()
+        serializer = self.get_serializer(sponsor)
+        return Response(data=serializer.data, status=200)
+
+
+    
+# GET /api/orphans/sponsors/
+class OrphanSponsorListView(generics.ListAPIView):
+    serializer_class = OrphanSponsorSerializer
+    permission_classes = [IsDonor & permissions.IsAuthenticated]
+    def get_queryset(self):
+        return OrphanSponsor.objects.filter(donor=self.request.user , is_active=True)
+    
+# DELETE /api/orphans/<pk>/
+class OrphanDestroyView(generics.DestroyAPIView):
+    queryset = Orphan.objects.all()
+    serializer_class = OrphanSerializer
+    permission_classes = [OrphanageOrAdminPermission]
+
+    def perform_destroy(self, instance):
+        self.check_object_permissions(self.request, instance)
+        instance.delete()
+
+
+--- FILE: orphan\__init__.py ---
+
+
+
+
+--- FILE: orphanages\admin.py ---
+
+
+
+
+--- FILE: orphanages\apps.py ---
+
+from django.apps import AppConfig
+
+
+class OrphanagesConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'orphanages'
+
+
+
+--- FILE: orphanages\models.py ---
+
+from django.db import models
+from accounts.models import User
+from matcher.embeddings import embed_text
+import json
+
+
+
+class Orphanage(models.Model):
+    manager = models.OneToOneField(User, on_delete=models.PROTECT,limit_choices_to={"role": "ORPHANAGE"})
+    name = models.CharField(max_length=255)
+    city = models.CharField(max_length=120)
+    latitude  = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    verification_doc = models.FileField(upload_to="verification/", blank=True)
+    is_public_approved = models.BooleanField(default=False)
+    def __str__(self):
+        return self.name
+
+class OrphanageNeedRequest(models.Model):
+    orphanage = models.ForeignKey("Orphanage",on_delete=models.CASCADE,related_name="need_requests")
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    embedding = models.TextField(null=True, blank=True)
+    is_open = models.BooleanField(default=True)
+    def __str__(self):
+        return f"{self.orphanage} – {self.title}"
+    def save(self, *args, **kwargs):
+        text = f"{self.title}. {self.description}"
+        embedding_list = embed_text(text).tolist()
+        self.embedding = json.dumps(embedding_list)
+        super().save(*args, **kwargs)
+
+
+class Review(models.Model):
+    orphanage = models.ForeignKey("Orphanage",on_delete=models.CASCADE,related_name="reviews")
+    donor = models.ForeignKey("accounts.User",on_delete=models.CASCADE,limit_choices_to={"role": "DONOR"})
+    stars = models.PositiveSmallIntegerField(choices=[(i, i) for i in range(1, 6)])
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        unique_together = ("orphanage", "donor")      
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.orphanage} – {self.stars}★ by {self.donor}"
+        
+
+
+--- FILE: orphanages\serializers.py ---
+
+from rest_framework import serializers
+from orphan.serializers import OrphanSerializer
+from .models import Orphanage, OrphanageNeedRequest, Review
+
+
+class OrphanageSerializer(serializers.ModelSerializer):
+    avg_rating   = serializers.FloatField(read_only=True)
+    rating_count = serializers.IntegerField(read_only=True)
+    orphans      = OrphanSerializer(many=True, read_only=True)
+    class Meta:
+        model  = Orphanage
+        fields = "__all__"
+        read_only_fields = ("id",)
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    donor_email = serializers.CharField(source="donor.email", read_only=True)
+    class Meta:
+        model  = Review
+        fields = ("id", "stars", "comment", "donor_email", "created_at", "orphanage")
+        read_only_fields = ("id", "donor_email", "created_at", "orphanage")
+
+
+class OrphanageNeedRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = OrphanageNeedRequest
+        fields = ("id","title","description","created_at","is_open",)
+        read_only_fields = ("id","embedding","orphanage")
+        
+
+
+
+
+--- FILE: orphanages\tests.py ---
+
+from django.test import TestCase
+
+# Create your tests here.
+
+
+
+--- FILE: orphanages\views.py ---
+
+from rest_framework import generics
+from accounts.permissions import IsAdmin, IsDonor, IsOrphanage
+from .models import Orphanage, OrphanageNeedRequest, Review
+from .serializers import  OrphanageNeedRequestSerializer, ReviewSerializer, OrphanageSerializer
+from rest_framework import  permissions
+from .models import Orphanage
+
+from django.db.models import Avg, Count
+
+
+
+
+class OrphanageListView(generics.ListAPIView):
+    queryset = Orphanage.objects.annotate(
+        avg_rating=Avg('reviews__stars'),
+        rating_count=Count('reviews')
+    )
+    serializer_class = OrphanageSerializer
+    permission_classes = [permissions.AllowAny]
+    http_method_names = ['get']
+
+
+# PUT/PATCH /api/orphanages/<id>/
+# Updates orphanage details, restricted to admin or orphanage manager
+class OrphanageUpdateView(generics.UpdateAPIView):
+    queryset = Orphanage.objects.all()
+    serializer_class = OrphanageSerializer
+    permission_classes = [IsAdmin | IsOrphanage]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == "ORPHANAGE":
+            return self.queryset.filter(manager=user)
+        return self.queryset
+
+
+# POST /api/orphanages/
+# Creates new orphanage, admin only
+class OrphanageCreateView(generics.CreateAPIView):
+    serializer_class = OrphanageSerializer
+    permission_classes = [IsAdmin]
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+
+# GET /api/orphanages/<id>/reviews/
+# Lists all reviews for a specific orphanage
+class OrphanageReviewsView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        orphanage_id = self.kwargs['pk']
+        return Review.objects.filter(orphanage_id=orphanage_id)
+
+# POST /api/orphanages/<id>/reviews/
+# Creates a new review for an orphanage
+class OrphanageReviewCreateView(generics.CreateAPIView):
+    serializer_class = ReviewSerializer
+    permission_classes = [IsDonor]
+
+    def get_queryset(self):
+        return Review.objects.filter(orphanage=self.kwargs['pk'])
+    def perform_create(self, serializer):
+        serializer.save(donor=self.request.user)
+
+
+# POST /api/orphanages/<id>/verify/
+# Upload verification documents for an orphanage
+class OrphanageVerificationView(generics.UpdateAPIView):
+    queryset = Orphanage.objects.all()
+    serializer_class = OrphanageSerializer
+    permission_classes = [IsOrphanage]
+
+    def get_queryset(self):
+        return self.queryset.filter(manager=self.request.user)
+
+
+# POST /api/orphanages/need-requests/create/
+# Creates a new need request for an orphanage
+class OrphanageNeedRequestCreateView(generics.CreateAPIView):
+    serializer_class = OrphanageNeedRequestSerializer
+    permission_classes = [IsOrphanage]
+
+    def perform_create(self, serializer):
+        orphanage = Orphanage.objects.get(manager=self.request.user)
+        serializer.save(orphanage=orphanage)
+
+# GET /api/orphanages/need-requests/
+# Lists all need requests for an orphanage
+class OrphanageNeedRequestListView(generics.ListAPIView):
+    serializer_class = OrphanageNeedRequestSerializer
+    permission_classes = [IsOrphanage]
+
+    def get_queryset(self):
+        return OrphanageNeedRequest.objects.filter(orphanage=Orphanage.objects.get(manager=self.request.user))
+
+# GET /api/orphanages/need-requests/list/
+# Lists all need requests for all orphanages
+class OrphanageNeedRequestListView(generics.ListAPIView):
+    serializer_class = OrphanageNeedRequestSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        return OrphanageNeedRequest.objects.all()
+
+# PATCH /api/orphanages/need-requests/<id>/
+# Closes a need request
+class OrphanageNeedRequestUpdateView(generics.UpdateAPIView):
+    serializer_class = OrphanageNeedRequestSerializer
+    permission_classes = [IsOrphanage]
+
+    def get_queryset(self):
+        return OrphanageNeedRequest.objects.filter(orphanage=Orphanage.objects.get(manager=self.request.user))  
+    def perform_update(self, serializer):
+        serializer.save(is_open=False)  
+
+
+
+
+
+
+--- FILE: orphanages\__init__.py ---
+
+
+
+
+--- FILE: payment\admin.py ---
+
+from django.contrib import admin
+
+# Register your models here.
+
+
+
+--- FILE: payment\apps.py ---
+
+from django.apps import AppConfig
+
+
+class PaymentConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'payment'
+
+
+
+--- FILE: payment\models.py ---
+
+from django.db import models
+from donations.models import MoneyDonation
+from accounts.models import User
+
+class PaymentStatus(models.TextChoices):
+    PENDING = "PENDING", "Pending"
+    COMPLETED = "COMPLETED", "Completed"
+    FAILED = "FAILED", "Failed"
+    REFUNDED = "REFUNDED", "Refunded"
+
+class Payment(models.Model):
+    donation = models.ForeignKey(
+        MoneyDonation,
+        on_delete=models.PROTECT,
+        related_name="payments"
+    )
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=3, default="USD")
+    status = models.CharField(
+        max_length=20,
+        choices=PaymentStatus.choices,
+        default=PaymentStatus.PENDING
+    )
+    payment_method = models.CharField(max_length=50) 
+    payment_intent_id = models.CharField(max_length=255, blank=True)
+    client_secret = models.CharField(max_length=255, blank=True)
+    error_message = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Payment {self.id} - {self.amount} {self.currency}"
+
+    class Meta:
+        ordering = ['-created_at']
+
+
+
+--- FILE: payment\serializers.py ---
+
+from rest_framework import serializers
+from .models import Payment
+from donations.models import MoneyDonation
+
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = [
+            'id', 'donation', 'amount', 'currency', 'status',
+            'payment_method', 'payment_intent_id', 'client_secret',
+            'error_message', 'created_at', 'updated_at'
+        ]
+        read_only_fields = [
+            'id', 'status', 'payment_intent_id', 'client_secret',
+            'error_message', 'created_at', 'updated_at'
+        ]
+
+class CreatePaymentSerializer(serializers.Serializer):
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+    currency = serializers.CharField(max_length=3, default="USD")
+    payment_method = serializers.CharField(max_length=50)
+    donation_id = serializers.IntegerField()
+
+    def validate(self, data):
+        try:
+            donation = MoneyDonation.objects.get(id=data['donation_id'])
+            if donation.amount != data['amount']:
+                raise serializers.ValidationError("Amount doesn't match donation amount")
+            if donation.currency != data['currency']:
+                raise serializers.ValidationError("Currency doesn't match donation currency")
+        except MoneyDonation.DoesNotExist:
+            raise serializers.ValidationError("Donation not found")
+        return data
+
+class PaymentWebhookSerializer(serializers.Serializer):
+    payment_intent_id = serializers.CharField()
+    status = serializers.CharField()
+    error_message = serializers.CharField(required=False, allow_blank=True)
+
+
+
+--- FILE: payment\tests.py ---
+
+from django.test import TestCase
+
+# Create your tests here.
+
+
+
+--- FILE: payment\views.py ---
+
+from django.shortcuts import render
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
+from .models import Payment
+from .serializers import (
+    PaymentSerializer,
+    CreatePaymentSerializer,
+    PaymentWebhookSerializer
+)
+from donations.models import MoneyDonation
+from services.stripe_service import StripeService
+from django.http import HttpResponse
+import json
+
+class PaymentViewSet(viewsets.ModelViewSet):
+    serializer_class = PaymentSerializer
+    permission_classes = [IsAuthenticated]
+    stripe_service = StripeService()
+
+    def get_queryset(self):
+        return Payment.objects.filter(donation__donor=self.request.user)
+
+    @action(detail=False, methods=['post'])
+    def create_payment_intent(self, request):
+        serializer = CreatePaymentSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = serializer.validated_data
+        donation = get_object_or_404(MoneyDonation, id=data['donation_id'])
+
+        try:
+            # Create payment intent using StripeService
+            intent_data = self.stripe_service.create_payment_intent(
+                amount=data['amount'],
+                currency=data['currency'],
+                metadata={
+                    'donation_id': donation.id,
+                    'user_id': request.user.id
+                }
+            )
+
+            # Create payment record
+            payment = Payment.objects.create(
+                donation=donation,
+                amount=data['amount'],
+                currency=data['currency'],
+                payment_method=data['payment_method'],
+                payment_intent_id=intent_data['id'],
+                client_secret=intent_data['client_secret']
+            )
+
+            return Response({
+                'client_secret': intent_data['client_secret'],
+                'payment_id': payment.id
+            })
+
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+    @action(detail=False, methods=['post'])
+    def webhook(self, request):
+        payload = request.body
+        sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+
+        try:
+            # Verify and construct the webhook event
+            event = self.stripe_service.construct_webhook_event(payload, sig_header)
+
+            # Handle the event
+            if event.type == 'payment_intent.succeeded':
+                payment_data = self.stripe_service.handle_payment_intent_succeeded(event)
+            elif event.type == 'payment_intent.payment_failed':
+                payment_data = self.stripe_service.handle_payment_intent_failed(event)
+            else:
+                return HttpResponse(status=200)
+
+            # Update payment record
+            payment = get_object_or_404(
+                Payment,
+                payment_intent_id=payment_data['payment_intent_id']
+            )
+            payment.status = payment_data['status']
+            if 'error_message' in payment_data:
+                payment.error_message = payment_data['error_message']
+            payment.save()
+
+            # Update donation status if payment is completed
+            if payment_data['status'] == 'COMPLETED':
+                payment.donation.status = 'COMPLETED'
+                payment.donation.save()
+
+            return HttpResponse(status=200)
+
+        except Exception as e:
+            return HttpResponse(str(e), status=400)
+
+    @action(detail=True, methods=['post'])
+    def refund(self, request, pk=None):
+        payment = self.get_object()
+        
+        try:
+            refund_data = self.stripe_service.create_refund(
+                payment_intent_id=payment.payment_intent_id
+            )
+            
+            payment.status = 'REFUNDED'
+            payment.save()
+            
+            return Response({
+                'status': 'success',
+                'refund_id': refund_data['id'],
+                'amount': refund_data['amount']
+            })
+            
+        except Exception as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+
+--- FILE: payment\__init__.py ---
+
+
+
+
+--- FILE: services\route_service.py ---
+
+
+
+
+--- FILE: services\stripe_service.py ---
+
+import stripe
+from django.conf import settings
+from typing import Dict, Any, Optional
+from decimal import Decimal
+
+class StripeService:
+    def __init__(self):
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        self.webhook_secret = settings.STRIPE_WEBHOOK_SECRET
+
+    def create_payment_intent(
+        self,
+        amount: Decimal,
+        currency: str,
+        metadata: Dict[str, Any],
+        payment_method_types: list = ['card']
+    ) -> Dict[str, Any]:
+        """
+        Create a payment intent with Stripe
+        """
+        try:
+            intent = stripe.PaymentIntent.create(
+                amount=int(float(amount) * 100),  # Convert to cents
+                currency=currency.lower(),
+                payment_method_types=payment_method_types,
+                metadata=metadata
+            )
+            return {
+                'id': intent.id,
+                'client_secret': intent.client_secret,
+                'status': intent.status
+            }
+        except stripe.error.StripeError as e:
+            raise Exception(f"Stripe error: {str(e)}")
+
+    def retrieve_payment_intent(self, payment_intent_id: str) -> Dict[str, Any]:
+        """
+        Retrieve a payment intent from Stripe
+        """
+        try:
+            intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+            return {
+                'id': intent.id,
+                'status': intent.status,
+                'amount': intent.amount / 100,  # Convert from cents
+                'currency': intent.currency,
+                'client_secret': intent.client_secret
+            }
+        except stripe.error.StripeError as e:
+            raise Exception(f"Stripe error: {str(e)}")
+
+    def confirm_payment_intent(
+        self,
+        payment_intent_id: str,
+        payment_method: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Confirm a payment intent
+        """
+        try:
+            intent = stripe.PaymentIntent.confirm(
+                payment_intent_id,
+                payment_method=payment_method
+            )
+            return {
+                'id': intent.id,
+                'status': intent.status,
+                'client_secret': intent.client_secret
+            }
+        except stripe.error.StripeError as e:
+            raise Exception(f"Stripe error: {str(e)}")
+
+    def cancel_payment_intent(self, payment_intent_id: str) -> Dict[str, Any]:
+        """
+        Cancel a payment intent
+        """
+        try:
+            intent = stripe.PaymentIntent.cancel(payment_intent_id)
+            return {
+                'id': intent.id,
+                'status': intent.status
+            }
+        except stripe.error.StripeError as e:
+            raise Exception(f"Stripe error: {str(e)}")
+
+    def create_refund(
+        self,
+        payment_intent_id: str,
+        amount: Optional[Decimal] = None
+    ) -> Dict[str, Any]:
+        """
+        Create a refund for a payment
+        """
+        try:
+            refund_params = {
+                'payment_intent': payment_intent_id
+            }
+            if amount:
+                refund_params['amount'] = int(float(amount) * 100)
+
+            refund = stripe.Refund.create(**refund_params)
+            return {
+                'id': refund.id,
+                'status': refund.status,
+                'amount': refund.amount / 100
+            }
+        except stripe.error.StripeError as e:
+            raise Exception(f"Stripe error: {str(e)}")
+
+    def construct_webhook_event(self, payload: bytes, sig_header: str) -> stripe.Event:
+        """
+        Construct and verify a webhook event
+        """
+        try:
+            event = stripe.Webhook.construct_event(
+                payload,
+                sig_header,
+                self.webhook_secret
+            )
+            return event
+        except stripe.error.SignatureVerificationError as e:
+            raise Exception(f"Invalid signature: {str(e)}")
+        except Exception as e:
+            raise Exception(f"Webhook error: {str(e)}")
+
+    def handle_payment_intent_succeeded(self, event: stripe.Event) -> Dict[str, Any]:
+        """
+        Handle successful payment intent
+        """
+        payment_intent = event.data.object
+        return {
+            'payment_intent_id': payment_intent.id,
+            'status': 'COMPLETED',
+            'amount': payment_intent.amount / 100,
+            'currency': payment_intent.currency
+        }
+
+    def handle_payment_intent_failed(self, event: stripe.Event) -> Dict[str, Any]:
+        """
+        Handle failed payment intent
+        """
+        payment_intent = event.data.object
+        return {
+            'payment_intent_id': payment_intent.id,
+            'status': 'FAILED',
+            'error_message': payment_intent.last_payment_error.message if payment_intent.last_payment_error else 'Payment failed'
+        }
+
+
+
+--- FILE: volunteers\admin.py ---
+
+
+
+
+--- FILE: volunteers\apps.py ---
+
+from django.apps import AppConfig
+
+
+class VolunteersConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'volunteers'
+
+
+
+--- FILE: volunteers\models.py ---
+
+from django.db import models
+from accounts.models import User
+from matcher.embeddings import embed_text
+from orphanages.models import Orphanage
+import json
+
+class Volunteer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,limit_choices_to={"role": "VOLUNTEER"})
+    skills = models.JSONField( blank=True)  
+    availability = models.JSONField( blank=True)  
+    def __str__(self):
+        return str(self.user)
+
+class OfferStatus(models.TextChoices):
+    OPEN     = "OPEN",     "Open"
+    MATCHED  = "MATCHED",  "Matched"
+    DONE     = "DONE",     "Done"
+
+class VolunteerOfferRequest(models.Model):
+    volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE, related_name="offer_requests")
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=OfferStatus.choices,default=OfferStatus.OPEN)
+    embedding = models.TextField(null=True, blank=True)
+    is_open = models.BooleanField(default=True)
+    def save(self, *args, **kwargs):    
+        text = f"{self.title}. {self.description}"
+        embedding_list = embed_text(text).tolist()
+        self.embedding = json.dumps(embedding_list)
+        super().save(*args, **kwargs)
+    def __str__(self):
+        return f"{self.title[:30]}... ({self.status})"
+
+
+
+
+--- FILE: volunteers\serializers.py ---
+
+from rest_framework import serializers
+from .models import VolunteerOfferRequest, Volunteer
+
+class VolunteerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = Volunteer
+        fields = "__all__"
+
+class VolunteerOfferRequestSerializer(serializers.ModelSerializer):
+    volunteer = VolunteerSerializer(read_only=True)
+
+    class Meta:
+        model  = VolunteerOfferRequest
+        fields = ("id", "title", "description", "created_at", "status", "volunteer")
+        read_only_fields = ("id", "status", "volunteer","embedding")
+
+
+
+--- FILE: volunteers\tests.py ---
+
+from django.test import TestCase
+
+# Create your tests here.
+
+
+
+--- FILE: volunteers\views.py ---
+
+
+from rest_framework import generics, permissions
+from accounts.permissions import IsVolunteer, IsOrphanage, IsAdmin
+from .models import Volunteer, VolunteerOfferRequest
+from .serializers import VolunteerSerializer, VolunteerOfferRequestSerializer
+
+
+# POST /api/volunteers/
+# Creates new volunteer profile, restricted to users with volunteer role
+class VolunteerCreateView(generics.CreateAPIView):
+    queryset = Volunteer.objects.all()
+    serializer_class = VolunteerSerializer
+    permission_classes = [IsVolunteer]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+# PUT/PATCH /api/volunteers/<id>/
+# Updates volunteer profile, restricted to profile owner
+class VolunteerUpdateView(generics.UpdateAPIView):
+    queryset = Volunteer.objects.all()
+    serializer_class = VolunteerSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+
+# POST /api/volunteer-offers/
+# Creates new volunteer offer request
+class VolunteerOfferRequestCreateView(generics.CreateAPIView):
+    queryset = VolunteerOfferRequest.objects.all()
+    serializer_class = VolunteerOfferRequestSerializer
+    permission_classes = [IsVolunteer]
+
+    def perform_create(self, serializer):
+        volunteer = self.request.user.volunteer
+        serializer.save(volunteer=volunteer)
+
+
+# PUT/PATCH /api/volunteer-offers/<id>/
+# Updates volunteer offer request, restricted to offer owner
+class VolunteerOfferRequestUpdateView(generics.UpdateAPIView):
+    queryset = VolunteerOfferRequest.objects.all()
+    serializer_class = VolunteerOfferRequestSerializer
+    permission_classes = [IsVolunteer]
+
+    def get_queryset(self):
+        volunteer = self.request.user.volunteer
+        return self.queryset.filter(volunteer=volunteer)
+
+
+# GET /api/volunteer-offers/
+# Lists all volunteer offers, filtered by user role
+class VolunteerOfferRequestListView(generics.ListAPIView):
+    serializer_class = VolunteerOfferRequestSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = VolunteerOfferRequest.objects.all()
+
+        # Admins and orphanages can see all requests
+        if user.role in ['ADMIN', 'ORPHANAGE']:
+            return queryset
+
+        # Volunteers can only see their own requests
+        if user.role == 'VOLUNTEER':
+            return queryset.filter(volunteer__user=user)
+
+        return VolunteerOfferRequest.objects.none()
+
+
+# GET /api/volunteer-offers/my-requests/
+# Lists volunteer's own requests
+class MyVolunteerOfferRequestsView(generics.ListAPIView):
+    serializer_class = VolunteerOfferRequestSerializer
+    permission_classes = [IsVolunteer]
+
+    def get_queryset(self):
+        return VolunteerOfferRequest.objects.filter(volunteer__user=self.request.user)
+
+
+--- FILE: volunteers\__init__.py ---
+
+
+
+
+--- FILE: volunteers\management\commands\volunteer_match.py ---
+
+from django.core.management.base import BaseCommand
+from volunteers.matcher import match_open_requests
+from volunteers.signals import volunteer_assigned
+
+class Command(BaseCommand):
+    help = "Match open volunteer requests to available volunteers"
+
+    def handle(self, *args, **opts):
+        matches = match_open_requests()
+        for req, vol, score in matches:
+            volunteer_assigned.send(
+                sender=self.__class__,
+                request_id=req.id,
+                volunteer_id=vol.id,
+                score=score,
+            )
+            self.stdout.write(
+                self.style.SUCCESS(f"Assigned {vol} → request {req.id} (score {score:.2f})"))
+        if not matches:
+            self.stdout.write("No matches found")
+

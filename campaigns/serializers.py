@@ -5,4 +5,4 @@ from donations.models import Campaign
 class CampaignSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Campaign
-        fields = ("id", "title", "goal_amount", "start", "end", "is_open")
+        fields = ("id", "title", "goal_amount", "start", "end", "category", "is_open")

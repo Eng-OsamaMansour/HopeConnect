@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   db:
     image: mysql:8.4
@@ -18,29 +16,59 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       retries: 5
+
   redis:
     image: redis:7
     container_name: hope_redis
     restart: unless-stopped
-    ports: ["6379:6379"]
-  celery_worker:
-    build: .
-    command: celery -A hopeconnect worker -l info
-    depends_on: [db, redis]
-    environment: ["CELERY_BROKER_URL=redis://redis:6379/0"]
-  celery_beat:
-    build: .
-    command: celery -A hopeconnect beat -l info
-    depends_on: [db, redis]
-    environment: ["CELERY_BROKER_URL=redis://redis:6379/0"]
+    ports:
+      - "6379:6379"
+
   django:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    depends_on: [db, redis]
-    environment: ["CELERY_BROKER_URL=redis://redis:6379/0"]
+    container_name: hope_django
+    command: /entrypoint.sh
+    environment:
+      SERVICE: django
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file:
+      - .env
+
+  celery_worker:
+    build: .
+    container_name: hope_celery_worker
+    command: /entrypoint.sh
+    environment:
+      SERVICE: celery_worker
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env
+
+  celery_beat:
+    build: .
+    container_name: hope_celery_beat
+    command: /entrypoint.sh
+    environment:
+      SERVICE: celery_beat
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env
 
 volumes:
   mysql_data:
-
-
-

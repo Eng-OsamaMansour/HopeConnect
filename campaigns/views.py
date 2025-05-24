@@ -1,8 +1,11 @@
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from accounts.permissions import IsAdmin
 from rest_framework.response import Response
 from .models import Campaign
+from donations.models import Donation
 from .serializers import CampaignSerializer
+from donations.serializers import DonationSerializer
 
 # URL: /api/campaigns/
 # Method: POST
@@ -10,7 +13,7 @@ from .serializers import CampaignSerializer
 class CampaignCreateView(generics.CreateAPIView):
     queryset = Campaign.objects.all()
     serializer_class = CampaignSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdmin]
 
 # URL: /api/campaigns/<id>/close/
 # Method: PATCH
@@ -18,7 +21,7 @@ class CampaignCreateView(generics.CreateAPIView):
 class CampaignCloseView(generics.UpdateAPIView):
     queryset = Campaign.objects.all()
     serializer_class = CampaignSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdmin]
 
     def patch(self, request, *args, **kwargs):
         campaign = self.get_object()
@@ -36,3 +39,15 @@ class OpenCampaignsListView(generics.ListAPIView):
 
     def get_queryset(self):
         return Campaign.objects.filter(is_open=True)
+
+
+# URL: /api/campaigns/<id>/donations/
+# Method: GET
+# Admin can view donations for a campaign
+class CampaignDonationsListView(generics.ListAPIView):
+    serializer_class = DonationSerializer
+    permission_classes = [IsAdmin]
+
+    def get_queryset(self):
+        campaign = self.get_object()
+        return Donation.objects.filter(campaign=campaign)

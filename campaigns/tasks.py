@@ -1,11 +1,19 @@
 from celery import shared_task
-from django.core.mail import send_mass_mail
+from django.core.mail import send_mass_mail, send_mail
 from django.conf import settings
 from .models import Campaign, CampaignCategory
 from accounts.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+import os
+
+# Flag to check if we're in seeding mode
+IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
 
 @shared_task
 def notify_new_emergency_campaign(campaign_id):
+    if IS_SEEDING:
+        return
     try:
         campaign = Campaign.objects.get(id=campaign_id)
         if campaign.category != CampaignCategory.EMERGENCY:
@@ -34,10 +42,11 @@ def notify_new_emergency_campaign(campaign_id):
             (subject, body, settings.DEFAULT_FROM_EMAIL, [email])
             for email in all_users
         ]
-        
+        print("The Following Emails are being sent: ", messages)
         send_mass_mail(messages, fail_silently=True)
         return f"Emergency campaign notification sent to {len(messages)} users"
     
     except Campaign.DoesNotExist:
         return "Campaign not found"
+
 

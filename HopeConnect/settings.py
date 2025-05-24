@@ -56,6 +56,9 @@ INSTALLED_APPS = [
     'orphan',
     'volunteers',
     'channels',
+    'payment',
+    'matcher',
+    'debug_toolbar',
 
 ]
 
@@ -68,7 +71,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "EXCEPTION_HANDLER": "common.exceptions.api_exception_handler",
+
 }
 AUTH_USER_MODEL = "accounts.User"
 
@@ -80,6 +83,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'hopeconnect.urls'
@@ -105,10 +109,10 @@ WSGI_APPLICATION = 'hopeconnect.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+
 DATABASES = {
     "default": dj_database_url.parse(
-        f"mysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}"
-        f"@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}",
+        f"mysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}",
         engine="django.db.backends.mysql",
         conn_max_age=600,
     )
@@ -185,10 +189,35 @@ SPECTACULAR_SETTINGS = {
 CELERY_BEAT_SCHEDULE = {
     "run-semantic-matching": {
         "task": "matcher.tasks.run_semantic_matching",
-        "schedule": crontab(hour=3, minute=0),
+        "schedule": crontab(hour=0, minute=1),
     },
 }
 
 ASGI_APPLICATION = "hopeconnect.asgi.application"
-CHANNEL_LAYERS = {"default": {"BACKEND": "channels_redis.core.RedisChannelLayer",
-                              "CONFIG": {"hosts": [("localhost", 6379)]}}}
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)]
+        },
+    }
+}
+
+CELERY_BROKER_URL = "redis://hope_redis:6379/0"
+
+
+
+load_dotenv()
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+
+INTERNAL_IPS = ["127.0.0.1"]
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),    
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),       
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}

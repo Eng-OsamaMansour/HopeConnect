@@ -10,7 +10,7 @@ class OrphanGender(models.TextChoices):
 class Orphan(models.Model):
     orphanage = models.ForeignKey(Orphanage, on_delete=models.CASCADE, related_name="orphans")
     national_id = models.CharField(max_length=14, unique=True)
-    name = models.CharField(max_length=120)
+    name = models.CharField(max_length=120) 
     gender = models.CharField(max_length=1, choices=OrphanGender.choices)
     birth_date = models.DateField(null=True, blank=True)
     health_info = models.TextField(blank=True)

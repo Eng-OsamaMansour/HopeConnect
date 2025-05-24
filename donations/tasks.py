@@ -4,9 +4,15 @@ from celery import shared_task
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import Donation, DonationReport
+import os
+
+# Flag to check if we're in seeding mode
+IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
 
 @shared_task
 def send_donation_confirmation_email(donation_id):
+    if IS_SEEDING:
+        return
     try:
         donation = Donation.objects.get(id=donation_id)
         
@@ -52,12 +58,14 @@ The HopeConnect Support Team
             [donation.donor.email],
             fail_silently=False,
         )
-
+        print("Donation Confirmation Email Sent to: ", donation.donor.email)
     except Donation.DoesNotExist:
         pass
 
 @shared_task 
 def send_donation_status_update_email(donation_id):
+    if IS_SEEDING:
+        return
     try:
         donation = Donation.objects.get(id=donation_id)
 
@@ -87,21 +95,31 @@ The HopeConnect Support Team
             [donation.donor.email],
             fail_silently=False,
         )
-
+        print("Donation Status Update Email Sent to: ", donation.donor.email)
     except Donation.DoesNotExist:
         pass
 
 @receiver(post_save, sender=Donation)
 def donation_post_save(sender, instance, created, **kwargs):
-    if created:
-        send_donation_confirmation_email.delay(instance.id)
-    else:
-        # Only send status update email if status field was changed
-        if instance.tracker.has_changed('status'):
-            send_donation_status_update_email.delay(instance.id)
+    # Skip sending emails during seeding
+    if IS_SEEDING:
+        return
+        
+    try:
+        if created:
+            send_donation_confirmation_email.delay(instance.id)
+        else:
+            # Only send status update email if status field was changed
+            if instance.tracker.has_changed('status'):
+                send_donation_status_update_email.delay(instance.id)
+    except Exception:
+        # If Celery is not running, just skip sending the email
+        pass
 
 @shared_task
 def send_donation_report_email(report_id):
+    if IS_SEEDING:
+        return
     try:
         report = DonationReport.objects.get(id=report_id)
         donation = report.donation
@@ -133,11 +151,19 @@ The HopeConnect Support Team
             [donation.donor.email],
             fail_silently=False,
         )
-
+        print("Donation Report Email Sent to: ", donation.donor.email)          
     except DonationReport.DoesNotExist:
         pass
 
 @receiver(post_save, sender=DonationReport)
 def donation_report_post_save(sender, instance, created, **kwargs):
-    if created:
-        send_donation_report_email.delay(instance.id)
+    # Skip sending emails during seeding
+    if IS_SEEDING:
+        return
+                
+    try:
+        if created:
+            send_donation_report_email.delay(instance.id)
+    except Exception:
+        # If Celery is not running, just skip sending the email
+        pass

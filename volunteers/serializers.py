@@ -11,5 +11,5 @@ class VolunteerOfferRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model  = VolunteerOfferRequest
-        fields = "__all__"
-        read_only_fields = ("id", "status", "volunteer")
+        fields = ("id", "title", "description", "created_at", "status", "volunteer")
+        read_only_fields = ("id", "status", "volunteer","embedding")

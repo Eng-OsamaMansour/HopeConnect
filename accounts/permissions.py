@@ -1,5 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 from rest_framework import permissions
+from accounts.models import Role
 
 class RolePermission(BasePermission):
     allowed_roles: set[str] = set()
@@ -12,24 +13,24 @@ class RolePermission(BasePermission):
         )
 
 class IsAdmin(RolePermission):
-    allowed_roles = {"ADMIN"}
+    allowed_roles = Role.ADMIN
 
 class IsDonor(RolePermission):
-    allowed_roles = {"DONOR"}
+    allowed_roles = Role.DONOR
 
 class IsOrphanage(RolePermission):
-    allowed_roles = {"ORPHANAGE"}
+    allowed_roles = Role.ORPHANAGE
 
 class IsVolunteer(RolePermission):
-    allowed_roles = {"VOLUNTEER"}
+    allowed_roles = Role.VOLUNTEER
 
 class IsLogistics(RolePermission):
-    allowed_roles = {'IsLogistics'}
+    allowed_roles = Role.LOGISTICS
 
 class OrphanageOrAdminPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.user.is_staff:
             return True
-        if request.user.role == 'ORPHANAGE':
+        if request.user.role == Role.ORPHANAGE:
             return obj.orphan.orphanage.manager == request.user
         return False

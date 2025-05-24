@@ -1,12 +1,10 @@
-from rest_framework import viewsets,generics
+from rest_framework import generics
 from accounts.permissions import IsAdmin, IsDonor, IsOrphanage
-from .models import Orphan, Orphanage, Review
-from .serializers import OrphanSerializer, OrphanageSerializer, OrphanageVerifySerializer, ReviewSerializer
-from rest_framework import mixins, viewsets, permissions
+from .models import Orphanage, OrphanageNeedRequest, Review
+from .serializers import  OrphanageNeedRequestSerializer, ReviewSerializer, OrphanageSerializer
+from rest_framework import  permissions
 from .models import Orphanage
-from .serializers import OrphanageSerializer
-from rest_framework.decorators import action
-from rest_framework.response import Response
+
 from django.db.models import Avg, Count
 
 
@@ -14,8 +12,8 @@ from django.db.models import Avg, Count
 
 class OrphanageListView(generics.ListAPIView):
     queryset = Orphanage.objects.annotate(
-        avg_rating=Avg('review__stars'),
-        rating_count=Count('review')
+        avg_rating=Avg('reviews__stars'),
+        rating_count=Count('reviews')
     )
     serializer_class = OrphanageSerializer
     permission_classes = [permissions.AllowAny]
@@ -39,9 +37,11 @@ class OrphanageUpdateView(generics.UpdateAPIView):
 # POST /api/orphanages/
 # Creates new orphanage, admin only
 class OrphanageCreateView(generics.CreateAPIView):
-    queryset = Orphanage.objects.all()
     serializer_class = OrphanageSerializer
     permission_classes = [IsAdmin]
+
+    def perform_create(self, serializer):
+        serializer.save()
 
 
 # GET /api/orphanages/<id>/reviews/
@@ -70,10 +70,51 @@ class OrphanageReviewCreateView(generics.CreateAPIView):
 # Upload verification documents for an orphanage
 class OrphanageVerificationView(generics.UpdateAPIView):
     queryset = Orphanage.objects.all()
-    serializer_class = OrphanageVerifySerializer
+    serializer_class = OrphanageSerializer
     permission_classes = [IsOrphanage]
 
     def get_queryset(self):
         return self.queryset.filter(manager=self.request.user)
+
+
+# POST /api/orphanages/need-requests/create/
+# Creates a new need request for an orphanage
+class OrphanageNeedRequestCreateView(generics.CreateAPIView):
+    serializer_class = OrphanageNeedRequestSerializer
+    permission_classes = [IsOrphanage]
+
+    def perform_create(self, serializer):
+        orphanage = Orphanage.objects.get(manager=self.request.user)
+        serializer.save(orphanage=orphanage)
+
+# GET /api/orphanages/need-requests/
+# Lists all need requests for an orphanage
+class OrphanageNeedRequestListView(generics.ListAPIView):
+    serializer_class = OrphanageNeedRequestSerializer
+    permission_classes = [IsOrphanage]
+
+    def get_queryset(self):
+        return OrphanageNeedRequest.objects.filter(orphanage=Orphanage.objects.get(manager=self.request.user))
+
+# GET /api/orphanages/need-requests/list/
+# Lists all need requests for all orphanages
+class OrphanageNeedRequestListView(generics.ListAPIView):
+    serializer_class = OrphanageNeedRequestSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        return OrphanageNeedRequest.objects.all()
+
+# PATCH /api/orphanages/need-requests/<id>/
+# Closes a need request
+class OrphanageNeedRequestUpdateView(generics.UpdateAPIView):
+    serializer_class = OrphanageNeedRequestSerializer
+    permission_classes = [IsOrphanage]
+
+    def get_queryset(self):
+        return OrphanageNeedRequest.objects.filter(orphanage=Orphanage.objects.get(manager=self.request.user))  
+    def perform_update(self, serializer):
+        serializer.save(is_open=False)  
+
 
 

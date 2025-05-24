@@ -2,8 +2,8 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
-from accounts.permissions import IsDonor, OrphanageOrAdminPermission
-
+from accounts.permissions import IsDonor, OrphanageOrAdminPermission, IsAdmin
+from orphan.models import Orphan
 from .models import (
     Donation, DonationReport, GeneralDonation, EducationDonation,
     MedicalDonation, MoneyDonation, DonationType
@@ -13,22 +13,21 @@ from .serializers import (
     EducationDonationSerializer, MedicalDonationSerializer,
     MoneyDonationSerializer
 )
-from orphanages.models import Orphan
 
+# POST /api/donations/
+class DonationCreateView(generics.CreateAPIView):
+    serializer_class = DonationSerializer
+    permission_classes = [IsDonor & permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(donor=self.request.user)
 
 # POST /api/donations/general/
 class GeneralDonationCreateView(generics.CreateAPIView):
     serializer_class = GeneralDonationSerializer
     permission_classes = [IsDonor & permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
-        if self.request.data.get('donation_type') == DonationType.ORPHAN:
-            if self.request.data.get('campaign'):
-                raise ValidationError("Campaign should be empty for orphan donations")
-        else:
-            if self.request.data.get('orphan'):
-                raise ValidationError("Orphan should be empty for campaign donations")
-        
+    def perform_create(self, serializer):    
         serializer.save(donor=self.request.user)
 
 
@@ -38,12 +37,7 @@ class EducationDonationCreateView(generics.CreateAPIView):
     permission_classes = [IsDonor & permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        if self.request.data.get('donation_type') == DonationType.ORPHAN:
-            if self.request.data.get('campaign'):
-                raise ValidationError("Campaign should be empty for orphan donations")
-        else:
-            if self.request.data.get('orphan'):
-                raise ValidationError("Orphan should be empty for campaign donations")
+
         
         serializer.save(donor=self.request.user)
 
@@ -54,13 +48,6 @@ class MedicalDonationCreateView(generics.CreateAPIView):
     permission_classes = [IsDonor & permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        if self.request.data.get('donation_type') == DonationType.ORPHAN:
-            if self.request.data.get('campaign'):
-                raise ValidationError("Campaign should be empty for orphan donations")
-        else:
-            if self.request.data.get('orphan'):
-                raise ValidationError("Orphan should be empty for campaign donations")
-        
         serializer.save(donor=self.request.user)
 
 
@@ -70,13 +57,6 @@ class MoneyDonationCreateView(generics.CreateAPIView):
     permission_classes = [IsDonor & permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        if self.request.data.get('donation_type') == DonationType.ORPHAN:
-            if self.request.data.get('campaign'):
-                raise ValidationError("Campaign should be empty for orphan donations")
-        else:
-            if self.request.data.get('orphan'):
-                raise ValidationError("Orphan should be empty for campaign donations")
-        
         serializer.save(donor=self.request.user)
 
 
@@ -133,7 +113,7 @@ class DonorReportsListView(generics.ListAPIView):
 class DonationStatusUpdateView(generics.UpdateAPIView):
     queryset = Donation.objects.all()
     serializer_class = DonationSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdmin]
 
     def update(self, request, *args, **kwargs):
         donation = self.get_object()

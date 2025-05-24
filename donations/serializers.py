@@ -54,10 +54,9 @@ class MoneyDonationSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'donor', 'orphan', 'campaign', 'platform_fee',
             'donation_category', 'donation_type', 'status', 'created_at',
-            'amount', 'currency', 'payment_intent_id', 'pay_for',
-            'status'
+            'amount', 'currency', 'payment_intent_id', 'pay_for'
         ]
-        read_only_fields = ['donor', 'status', 'donation_category', 'donation_type', 'payment_intent_id']
+        read_only_fields = ['donor', 'status', 'donation_category', 'donation_  type', 'payment_intent_id']
 
 
 class DonationReportSerializer(serializers.ModelSerializer):

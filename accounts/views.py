@@ -1,4 +1,4 @@
-from rest_framework import  viewsets, permissions, status
+from rest_framework import  viewsets, permissions, status,generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -31,32 +31,19 @@ class LogoutView(viewsets.ViewSet):
         except Exception:
             return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
 
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    GET     /users/                  (admin → list users)
-    POST    /users/                  (anonymous → create user with limited roles, admin → create any role) 
-    GET     /users/{id}/             (admin/self → user details)
-    PATCH   /users/{id}/            (admin/self → update user)
-    DELETE  /users/{id}/            (self → soft delete user)
-    """
+class UserListView(generics.ListAPIView):
+    """GET /users/ (admin → list users)"""
     serializer_class = UserMeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdmin]
     queryset = User.objects.filter(is_active=True)
 
-    def get_permissions(self):
-        if self.action == 'create':
-            return [permissions.AllowAny()]
-        elif self.action == 'list':
-            return [IsAdmin()]
-        return super().get_permissions()
 
-    def get_queryset(self):
-        if self.request.user.is_staff:
-            return self.queryset
-        return self.queryset.filter(id=self.request.user.id)
+class UserCreateView(generics.CreateAPIView):
+    """POST /users/ (anonymous → create user with limited roles, admin → create any role)"""
+    serializer_class = RegisterSerializer
+    permission_classes = [permissions.AllowAny]
 
-    def create(self, request):
-        """Create new user (public with limited roles, admin for any role)"""
+    def create(self, request, *args, **kwargs):
         role = request.data.get('role')
         if not request.user.is_staff:  # Non-admin users
             if role not in [Role.ORPHANAGE, Role.DONOR, Role.VOLUNTEER]:
@@ -65,23 +52,41 @@ class UserViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_400_BAD_REQUEST
                 )
         
-        serializer = RegisterSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def update(self, request, *args, **kwargs):
-        """Update user (admin or self only)"""
-        instance = self.get_object()
-        if not request.user.is_staff and request.user.id != instance.id:
-            return Response(status=status.HTTP_403_FORBIDDEN)
-        return super().update(request, *args, **kwargs)
 
-    def destroy(self, request, *args, **kwargs):
-        """Soft delete user (self only)"""
-        instance = self.get_object()
-        if request.user.id != instance.id:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+class UserDetailView(generics.ListAPIView):
+    """GET /users/me/ (self → user details)"""
+    serializer_class = UserMeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return User.objects.filter(id=self.request.user.id)
+
+
+class UserUpdateView(generics.UpdateAPIView):
+    """PATCH /users/me/ (self → update user)"""
+    serializer_class = UserMeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    def get_object(self):
+        return self.request.user
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)
+    
+
+
+class UserDeleteView(generics.DestroyAPIView):
+    """DELETE /users/me/ (self → soft delete user)"""
+    serializer_class = UserMeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = User.objects.filter(is_active=True)
+
+    def get_queryset(self):
+        return self.queryset.filter(id=self.request.user.id)
+
+    def perform_destroy(self, instance):
         instance.is_active = False
         instance.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)

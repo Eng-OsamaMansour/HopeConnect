@@ -24,7 +24,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 class OrphanageNeedRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model  = OrphanageNeedRequest
-        fields = "__all__"
-        read_only_fields = ("id",)
+        fields = ("id","title","description","created_at","is_open",)
+        read_only_fields = ("id","embedding","orphanage")
         
 

@@ -1,8 +1,7 @@
 from django.db import models
-
-from django.db import models
 from accounts.models import User
 from matcher.embeddings import embed_text
+import json
 
 
 
@@ -18,19 +17,21 @@ class Orphanage(models.Model):
         return self.name
 
 class OrphanageNeedRequest(models.Model):
-    orphanage = models.ForeignKey("Orphanage",on_delete=models.CASCADE,related_name="need_requests")
+    orphanage = models.ForeignKey("Orphanage", on_delete=models.CASCADE, related_name="need_requests")
     title = models.CharField(max_length=255)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    embedding = models.CharField(models.FloatField(), null=True, blank=True)
+    embedding = models.TextField(null=True, blank=True)
     is_open = models.BooleanField(default=True)
+
     def __str__(self):
         return f"{self.orphanage} – {self.title}"
+
     def save(self, *args, **kwargs):
         text = f"{self.title}. {self.description}"
-        self.embedding = embed_text(text).tolist()
+        embedding_list = embed_text(text).tolist()  # Should return 1D list
+        self.embedding = json.dumps(embedding_list)
         super().save(*args, **kwargs)
-
 
 class Review(models.Model):
     orphanage = models.ForeignKey("Orphanage",on_delete=models.CASCADE,related_name="reviews")

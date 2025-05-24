@@ -2,41 +2,46 @@ from celery import shared_task
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import OrphanUpdate
-from donations.models import Sponsorship
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+import os
+
+# Flag to check if we're in seeding mode
+IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
 
 @shared_task
-def notify_sponsor_of_orphan_update(update_id):
+def notify_sponsor_of_update(update_id):
+    if IS_SEEDING:
+        return
     try:
         update = OrphanUpdate.objects.get(id=update_id)
-        orphan = update.orphan
         
-        # Get active sponsorships for this orphan
-        sponsorships = Sponsorship.objects.filter(
-            orphan=orphan,
-            is_active=True
-        ).select_related('donor')
-        
-        for sponsorship in sponsorships:
-            subject = f"New Update About {orphan.name}"
-            message = (
-                f"Dear {sponsorship.donor.get_full_name()},\n\n"
-                f"We have a new update about {orphan.name} that we'd like to share with you.\n\n"
-                f"Update Date: {update.created_at.strftime('%B %d, %Y')}\n"
-                f"Update Details:\n{update.note}\n\n"
-                f"Thank you for your continued support in making a difference "
-                f"in {orphan.name}'s life.\n\n"
-                f"Best regards,\nThe HopeConnect Team"
-            )
-            
-            send_mail(
-                subject=subject,
-                message=message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[sponsorship.donor.email],
-                fail_silently=True
-            )
-        
-        return f"Update notification sent to {sponsorships.count()} sponsor(s)"
-        
+        subject = f'Update about {update.orphan.name}'
+        message = f"""
+Dear {update.orphan.sponsor.get_full_name()},
+
+We have an update about {update.orphan.name}:
+
+{update.content}
+
+Update Details:
+- Type: {update.get_update_type_display()}
+- Date: {update.created_at.strftime('%B %d, %Y')}
+
+Thank you for your continued support.
+
+Best regards,
+The HopeConnect Support Team
+        """
+
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [update.orphan.sponsor.email],
+            fail_silently=False,
+        )
+        print("Sponsor Update Email Sent to: ", update.orphan.sponsor.email)
     except OrphanUpdate.DoesNotExist:
-        return "Orphan update not found"
+        pass
+

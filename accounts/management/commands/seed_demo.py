@@ -1,211 +1,401 @@
-import csv
-import math
-import pathlib
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from django.db import IntegrityError, models
-from decimal import Decimal
+from datetime import timedelta
 import random
+import json
+from decimal import Decimal
 from faker import Faker
+from accounts.models import User, Role
+from orphanages.models import Orphanage, OrphanageNeedRequest, Review
+from orphan.models import Orphan, OrphanGender, OrphanSponsor, OrphanUpdate
+from donations.models import (
+    Donation, DonationCategory, DonationStatus, DonationType,
+    GeneralDonation, EducationDonation, MedicalDonation, MoneyDonation,
+    DonationReport
+)
+from campaigns.models import Campaign, CampaignCategory
+from logistics.models import Delivery, DeliveryStatus, Location
+from volunteers.models import Volunteer, VolunteerOfferRequest, OfferStatus
+from matcher.models import Matcher
+import os
 
 fake = Faker()
-Faker.seed(0)
 
-# ── project models ────────────────────────────────────────────────
-from accounts.models   import User, Role
-from orphanages.models import Orphanage, Orphan, OrphanUpdate, Review
-from donations.models  import (
-    Donor, Donation, DonationCategory, DonationStatus,
-    DonationItem, Campaign, OrphanSponsor
-)
-from volunteers.models import Volunteer, VolunteerRequest
-from logistics.models  import Delivery
-from services.route_service import compute_route
-from campaigns.models import CampaignCategory
-
-
-PASSWORD = "pass"          # default password for **all** seeded users
-
-
-def create_unique_user(role: str, **extra):
-    while True:
-        try:
-            return User.objects.create_user(
-                email=fake.unique.email(), password=PASSWORD, role=role, **extra
-            )
-        except IntegrityError:
-            fake.unique.clear()
-
-def haversine_km(lat1, lon1, lat2, lon2):
-    R = 6371
-    p = math.pi / 180
-    dlat = (lat2 - lat1) * p
-    dlon = (lon2 - lon1) * p
-    a = math.sin(dlat / 2) ** 2 + math.cos(lat1 * p) * math.cos(lat2 * p) * math.sin(dlon / 2) ** 2
-    return 2 * R * math.asin(math.sqrt(a))
-
-def safe_route(pickup, drop):
-    """Try real API; fall back to Haversine if 404/429 or key missing."""
-    dist, dur, poly = compute_route(pickup, drop)
-    if dist:
-        return dist, dur, poly
-    lat1, lon1 = map(float, pickup.split(","))
-    lat2, lon2 = map(float, drop.split(","))
-    km = haversine_km(lat1, lon1, lat2, lon2)
-    sec = int(km / 40 * 3600)  # assume 40 km/h
-    return int(km * 1000), sec, ""
-
-# ───── command ────────────────────────────────────────────────────────
 class Command(BaseCommand):
-    help = "Seed HopeConnect with demo data + seed_users.csv credentials."
+    help = 'Seeds the database with demo data'
 
-    def add_arguments(self, parser):
-        parser.add_argument("--donors",      type=int, default=100)
-        parser.add_argument("--orphans",     type=int, default=400)
-        parser.add_argument("--orphanages",  type=int, default=12)
-        parser.add_argument("--volunteers",  type=int, default=30)
+    def handle(self, *args, **kwargs):
+        # Set seeding flag
+        os.environ['DJANGO_SEEDING'] = 'true'
+        
+        self.stdout.write('Creating demo data...')
+        
+        try:
+            # Create users with different roles
+            users_data = []
+            users = self.create_users(users_data)
+            
+            # Create orphanages
+            orphanages = self.create_orphanages(users['orphanage'])
+            
+            # Create orphans
+            orphans = self.create_orphans(orphanages)
+            
+            # Create campaigns
+            campaigns = self.create_campaigns()
+            
+            # Create donations
+            donations = self.create_donations(users['donor'], orphans, campaigns)
+            
+            # Create delivery records
+            deliveries = self.create_deliveries(donations, users['logistics'])
+            
+            # Create volunteers and their offers
+            volunteers = self.create_volunteers(users['volunteer'])
+            offers = self.create_volunteer_offers(volunteers)
+            
+            # Create need requests and matches
+            need_requests = self.create_need_requests(orphanages)
+            matches = self.create_matches(need_requests, offers)
+            
+            # Create reviews
+            self.create_reviews(users['donor'], orphanages)
+            
+            # Create orphan sponsorships
+            self.create_orphan_sponsorships(orphans, users['donor'])
+            
+            # Create orphan updates
+            self.create_orphan_updates(orphans)
+            
+            # Save user credentials to a file
+            self.save_user_credentials(users_data)
+            
+            self.stdout.write(self.style.SUCCESS('Successfully created demo data'))
+        finally:
+            # Reset seeding flag
+            os.environ['DJANGO_SEEDING'] = 'false'
 
-    def handle(self, *args, **opts):
-        self.stdout.write(self.style.NOTICE("Seeding data …"))
-        today = timezone.now().date()
+    def create_users(self, users_data):
+        users = {
+            'admin': [],
+            'donor': [],
+            'orphanage': [],
+            'volunteer': [],
+            'logistics': []
+        }
+        
+        # Create admin users
+        for i in range(2):
+            user = User.objects.create_user(
+                email=f'admin{i+1}@example.com',
+                password='admin123',
+                first_name=fake.first_name(),
+                last_name=fake.last_name(),
+                role=Role.ADMIN,
+                phone_number=fake.phone_number()
+            )
+            users['admin'].append(user)
+            users_data.append({
+                'email': user.email,
+                'password': 'admin123',
+                'role': 'ADMIN'
+            })
 
-        # CSV of credentials
-        creds_path = pathlib.Path("seed_users.csv")
-        with creds_path.open("w", newline="", encoding="utf-8") as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(["email", "role", "password"])
+        # Create donor users
+        for i in range(10):
+            user = User.objects.create_user(
+                email=f'donor{i+1}@example.com',
+                password='donor123',
+                first_name=fake.first_name(),
+                last_name=fake.last_name(),
+                role=Role.DONOR,
+                phone_number=fake.phone_number()
+            )
+            users['donor'].append(user)
+            users_data.append({
+                'email': user.email,
+                'password': 'donor123',
+                'role': 'DONOR'
+            })
 
-            def new_user(role, **extra):
-                u = create_unique_user(role, **extra)
-                writer.writerow([u.email, role, PASSWORD])
-                return u
+        # Create orphanage users
+        for i in range(5):
+            user = User.objects.create_user(
+                email=f'orphanage{i+1}@example.com',
+                password='orphanage123',
+                first_name=fake.first_name(),
+                last_name=fake.last_name(),
+                role=Role.ORPHANAGE,
+                phone_number=fake.phone_number()
+            )
+            users['orphanage'].append(user)
+            users_data.append({
+                'email': user.email,
+                'password': 'orphanage123',
+                'role': 'ORPHANAGE'
+            })
 
-            # 1. Orphanages & managers
-            orphanages = []
-            for _ in range(opts["orphanages"]):
-                manager = new_user(Role.ORPHANAGE)
-                orphanage = Orphanage.objects.create(
-                    name=fake.company(),
-                    city=fake.city(),
-                    manager=manager,
-                    latitude=round(fake.latitude(), 6),
-                    longitude=round(fake.longitude(), 6),
-                    is_public_approved=fake.boolean(80),
-                )
-                orphanages.append(orphanage)
+        # Create volunteer users
+        for i in range(8):
+            user = User.objects.create_user(
+                email=f'volunteer{i+1}@example.com',
+                password='volunteer123',
+                first_name=fake.first_name(),
+                last_name=fake.last_name(),
+                role=Role.VOLUNTEER,
+                phone_number=fake.phone_number()
+            )
+            users['volunteer'].append(user)
+            users_data.append({
+                'email': user.email,
+                'password': 'volunteer123',
+                'role': 'VOLUNTEER'
+            })
 
-            # 2. Orphans
-            for _ in range(opts["orphans"]):
-                o = Orphan.objects.create(
+        # Create logistics users
+        for i in range(3):
+            user = User.objects.create_user(
+                email=f'logistics{i+1}@example.com',
+                password='logistics123',
+                first_name=fake.first_name(),
+                last_name=fake.last_name(),
+                role=Role.LOGISTICS,
+                phone_number=fake.phone_number()
+            )
+            users['logistics'].append(user)
+            users_data.append({
+                'email': user.email,
+                'password': 'logistics123',
+                'role': 'LOGISTICS'
+            })
+
+        return users
+
+    def create_orphanages(self, orphanage_users):
+        orphanages = []
+        for user in orphanage_users:
+            orphanage = Orphanage.objects.create(
+                manager=user,
+                name=fake.company(),
+                city=fake.city(),
+                latitude=Decimal(str(fake.latitude())),
+                longitude=Decimal(str(fake.longitude())),
+                is_public_approved=random.choice([True, False])
+            )
+            orphanages.append(orphanage)
+        return orphanages
+
+    def create_orphans(self, orphanages):
+        orphans = []
+        for orphanage in orphanages:
+            for _ in range(random.randint(5, 15)):
+                orphan = Orphan.objects.create(
+                    orphanage=orphanage,
+                    national_id=fake.unique.random_number(digits=14),
                     name=fake.name(),
-                    orphanage=random.choice(orphanages),
-                    gender=random.choice(["M", "F"]),
-                    birth_date=fake.date_between("-12y", "-2y"),
+                    gender=random.choice([OrphanGender.MALE, OrphanGender.FEMALE]),
+                    birth_date=fake.date_of_birth(minimum_age=5, maximum_age=18),
+                    health_info=fake.text(),
+                    education_status=random.choice(['Primary', 'Secondary', 'High School'])
                 )
-                if fake.boolean(40):
-                    OrphanUpdate.objects.create(
-                        orphan=o,
-                        title="Progress update",
-                        note=fake.text(120),
-                    )
+                orphans.append(orphan)
+        return orphans
 
-            # 3. Donors
-            donors = []
-            for _ in range(opts["donors"]):
-                user = new_user(Role.DONOR,
-                                first_name=fake.first_name(),
-                                last_name=fake.last_name())
-                donors.append(Donor.objects.create(user=user))
+    def create_campaigns(self):
+        campaigns = []
+        for _ in range(5):
+            campaign = Campaign.objects.create(
+                title=fake.catch_phrase(),
+                category=random.choice([c[0] for c in CampaignCategory.choices]),
+                goal_amount=Decimal(random.randint(1000, 10000)),
+                start=timezone.now().date(),
+                end=timezone.now().date() + timedelta(days=random.randint(30, 90)),
+                is_open=True
+            )
+            campaigns.append(campaign)
+        return campaigns
 
-            # 4. Volunteers
-            for _ in range(opts["volunteers"]):
-                v_user = new_user(Role.VOLUNTEER)
-                Volunteer.objects.create(
-                    user=v_user,
-                    skills=random.sample(
-                        ["teaching", "first aid", "sports", "cooking", "coding"], k=2
-                    )
+    def create_donations(self, donors, orphans, campaigns):
+        donations = []
+        
+        # Create general donations
+        for _ in range(20):
+            donation = GeneralDonation.objects.create(
+                donor=random.choice(donors),
+                orphan=random.choice(orphans),
+                campaign=random.choice(campaigns),
+                description=fake.text(),
+                material=random.choice(['Clothes', 'Books', 'Toys', 'Food']),
+                quantity=random.randint(1, 10),
+                need_transportation=random.choice([True, False]),
+                status=random.choice([s[0] for s in DonationStatus.choices]),
+                donation_type=random.choice([t[0] for t in DonationType.choices])
+            )
+            donations.append(donation)
+
+        # Create education donations
+        for _ in range(15):
+            donation = EducationDonation.objects.create(
+                donor=random.choice(donors),
+                orphan=random.choice(orphans),
+                campaign=random.choice(campaigns),
+                field=random.choice(['Math', 'Science', 'English', 'Art']),
+                course=random.choice(['Basic', 'Intermediate', 'Advanced']),
+                course_duration=random.randint(1, 12),
+                hours_per_week=random.randint(1, 5),
+                status=random.choice([s[0] for s in DonationStatus.choices]),
+                donation_type=random.choice([t[0] for t in DonationType.choices])
+            )
+            donations.append(donation)
+
+        # Create medical donations
+        for _ in range(10):
+            donation = MedicalDonation.objects.create(
+                donor=random.choice(donors),
+                orphan=random.choice(orphans),
+                campaign=random.choice(campaigns),
+                supply_type=random.choice(['Medicine', 'Equipment', 'First Aid']),
+                quantity=random.randint(1, 5),
+                description=fake.text(),
+                status=random.choice([s[0] for s in DonationStatus.choices]),
+                donation_type=random.choice([t[0] for t in DonationType.choices])
+            )
+            donations.append(donation)
+
+        # Create money donations
+        for _ in range(25):
+            donation = MoneyDonation.objects.create(
+                donor=random.choice(donors),
+                orphan=random.choice(orphans),
+                campaign=random.choice(campaigns),
+                amount=Decimal(random.randint(50, 1000)),
+                pay_for=random.choice(['Education', 'Medical', 'Food', 'Clothing']),
+                currency='USD',
+                status=random.choice([s[0] for s in DonationStatus.choices]),
+                donation_type=random.choice([t[0] for t in DonationType.choices])
+            )
+            donations.append(donation)
+
+        return donations
+
+    def create_deliveries(self, donations, logistics_users):
+        deliveries = []
+        for donation in donations:
+            if isinstance(donation, GeneralDonation) and donation.need_transportation:
+                # Create locations first
+                pickup_location = Location.objects.create(
+                    latitude=float(fake.latitude()),
+                    longitude=float(fake.longitude())
+                )
+                dropoff_location = Location.objects.create(
+                    latitude=float(fake.latitude()),
+                    longitude=float(fake.longitude())
+                )
+                current_location = Location.objects.create(
+                    latitude=float(fake.latitude()),
+                    longitude=float(fake.longitude())
                 )
 
-            # 5. Emergency campaigns
-            campaigns = [
-                Campaign.objects.create(
-                    title=f"Emergency Relief #{i+1}",
-                    category=CampaignCategory.EMERGENCY,
-                    goal_amount=Decimal("10000.00"),
-                    start=today,
-                    is_open=True,
+                # Create delivery with the locations
+                delivery = Delivery.objects.create(
+                    donation=donation,
+                    status=random.choice([s[0] for s in DeliveryStatus.choices]),
+                    pickup_location=pickup_location,
+                    dropOff_location=dropoff_location,
+                    current_location=current_location,
+                    pickup_date=fake.date_this_month(),
+                    dropOff_date=fake.date_this_month()
                 )
-                for i in range(3)
-            ]
+                deliveries.append(delivery)
+        return deliveries
 
-            # 6. Donations (+deliveries)
-            for donor in donors:
-                for _ in range(random.randint(1, 5)):
-                    cat = random.choice([DonationCategory.MONEY, DonationCategory.PHYSICAL])
-                    donation = Donation.objects.create(
-                        donor=donor,
-                        amount=Decimal(random.randint(10, 200)),
-                        currency="usd",
-                        category=cat,
-                        status=DonationStatus.COMPLETED,
-                        campaign=random.choice(campaigns),
-                    )
-                    if cat == DonationCategory.PHYSICAL:
-                        DonationItem.objects.create(
-                            donation=donation,
-                            description=fake.word(),
-                            quantity=random.randint(1, 10),
-                            unit="pcs",
-                        )
-                        pickup = "31.9505,35.1960"
-                        drop   = "31.5,35.4"
-                        dist, dur, poly = safe_route(pickup, drop)
-                        Delivery.objects.create(
-                            donation=donation,
-                            pickup_latlng=pickup,
-                            dropoff_latlng=drop,
-                            distance_m=dist,
-                            duration_s=dur,
-                            polyline=poly,
-                            status=random.choice(["pending", "in_transit", "delivered"]),
-                        )
+    def create_volunteers(self, volunteer_users):
+        volunteers = []
+        for user in volunteer_users:
+            volunteer = Volunteer.objects.create(
+                user=user,
+                skills=json.dumps(random.sample(['Teaching', 'Cooking', 'Cleaning', 'Medical', 'Sports'], k=random.randint(1, 3))),
+                availability=json.dumps({
+                    'weekdays': random.choice([True, False]),
+                    'weekends': random.choice([True, False]),
+                    'morning': random.choice([True, False]),
+                    'afternoon': random.choice([True, False]),
+                    'evening': random.choice([True, False])
+                })
+            )
+            volunteers.append(volunteer)
+        return volunteers
 
-            # 7. Sponsorships (unique per donor+orphan)
-            all_orphans = list(Orphan.objects.all())
-            for donor in donors:
-                pool = all_orphans.copy()
-                random.shuffle(pool)
-                for _ in range(random.randint(0, 3)):
-                    if not pool:
-                        break
-                    orphan = pool.pop()
-                    OrphanSponsor.objects.create(
-                        donor=donor,
-                        orphan=orphan,
-                        monthly_amount=Decimal(random.choice([25, 35, 50])),
-                        start_date=today.replace(day=1),
-                    )
+    def create_volunteer_offers(self, volunteers):
+        offers = []
+        for volunteer in volunteers:
+            for _ in range(random.randint(1, 3)):
+                offer = VolunteerOfferRequest.objects.create(
+                    volunteer=volunteer,
+                    title=fake.catch_phrase(),
+                    description=fake.text(),
+                    status=random.choice([s[0] for s in OfferStatus.choices]),
+                    is_open=random.choice([True, False])
+                )
+                offers.append(offer)
+        return offers
 
-            # 8. Volunteer requests
-            for o in orphanages:
-                for _ in range(random.randint(1, 3)):
-                    VolunteerRequest.objects.create(
-                        orphanage=o,
-                        need_description=fake.sentence(),
-                        required_skills=random.sample(["teaching", "first aid", "sports"], k=1),
-                    )
+    def create_need_requests(self, orphanages):
+        need_requests = []
+        for orphanage in orphanages:
+            for _ in range(random.randint(2, 5)):
+                request = OrphanageNeedRequest.objects.create(
+                    orphanage=orphanage,
+                    title=fake.catch_phrase(),
+                    description=fake.text(),
+                    is_open=True
+                )
+                need_requests.append(request)
+        return need_requests
 
-            # 9. Reviews
-            for o in orphanages:
-                for donor in random.sample(donors, k=min(5, len(donors))):
-                    Review.objects.create(
-                        orphanage=o,
-                        donor=donor.user,
-                        stars=random.randint(3, 5),
-                        comment=fake.sentence(nb_words=10),
-                    )
+    def create_matches(self, need_requests, offers):
+        matches = []
+        for need_request in need_requests:
+            if random.random() < 0.7:  # 70% chance of matching
+                offer = random.choice(offers)
+                match = Matcher.objects.create(
+                    need_request=need_request,
+                    volunteer_offer=offer
+                )
+                matches.append(match)
+        return matches
 
-        self.stdout.write(self.style.SUCCESS(
-            f"Demo data generated. Credentials saved to {creds_path.resolve()}"
-        ))
+    def create_reviews(self, donors, orphanages):
+        # Create a pool of donors for each orphanage
+        for orphanage in orphanages:
+            # Randomly select a subset of donors for this orphanage
+            available_donors = random.sample(donors, k=min(5, len(donors)))
+            for donor in available_donors:
+                Review.objects.create(
+                    orphanage=orphanage,
+                    donor=donor,
+                    stars=random.randint(1, 5),
+                    comment=fake.text()
+                )
+
+    def create_orphan_sponsorships(self, orphans, donors):
+        for orphan in orphans:
+            if random.random() < 0.3:  # 30% chance of having a sponsor
+                OrphanSponsor.objects.create(
+                    orphan=orphan,
+                    donor=random.choice(donors),
+                    is_active=random.choice([True, False])
+                )
+
+    def create_orphan_updates(self, orphans):
+        for orphan in orphans:
+            for _ in range(random.randint(1, 3)):
+                OrphanUpdate.objects.create(
+                    orphan=orphan,
+                    title=fake.catch_phrase(),
+                    note=fake.text()
+                )
+
+    def save_user_credentials(self, users_data):
+        with open('user_credentials.json', 'w') as f:
+            json.dump(users_data, f, indent=2)

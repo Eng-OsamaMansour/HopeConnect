@@ -4,9 +4,15 @@ from celery import shared_task
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import Delivery
+import os
+
+# Flag to check if we're in seeding mode
+IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
 
 @shared_task
 def send_delivery_creation_email(delivery_id):
+    if IS_SEEDING:
+        return
     try:
         delivery = Delivery.objects.get(id=delivery_id)
         
@@ -33,12 +39,14 @@ The HopeConnect Support Team
             [delivery.donation.donor.email],
             fail_silently=False,
         )
-
+        print("Delivery Creation Email Sent to: ", delivery.donation.donor.email)
     except Delivery.DoesNotExist:
         pass
 
 @shared_task
 def send_delivery_status_update_email(delivery_id):
+    if IS_SEEDING:
+        return
     try:
         delivery = Delivery.objects.get(id=delivery_id)
 
@@ -65,13 +73,14 @@ The HopeConnect Support Team
             [delivery.donation.donor.email],
             fail_silently=False,
         )
-
+        print("Delivery Status Update Email Sent to: ", delivery.donation.donor.email)
     except Delivery.DoesNotExist:
         pass
 
-
 @shared_task
 def send_delivery_location_update_email(delivery_id):
+    if IS_SEEDING:
+        return
     try:
         delivery = Delivery.objects.get(id=delivery_id)
 
@@ -96,17 +105,8 @@ The HopeConnect Support Team
             [delivery.donation.donor.email],    
             fail_silently=False,
         )
-
+        print("Delivery Status Update Email Sent to: ", delivery.donation.donor.email)
     except Delivery.DoesNotExist:
-        pass    
+        pass
 
-@receiver(post_save, sender=Delivery)
-def delivery_post_save(sender, instance, created, **kwargs):
-    if created:
-        send_delivery_creation_email.delay(instance.id)
-    else:
-        if instance.tracker.has_changed('status'):
-            send_delivery_status_update_email.delay(instance.id)
-        if instance.tracker.has_changed('current_location'):
-            send_delivery_location_update_email.delay(instance.id)
 

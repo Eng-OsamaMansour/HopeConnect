@@ -51,7 +51,8 @@ class Donation(models.Model):
     )
     donation_category = models.CharField(
         max_length=20,
-        choices=DonationCategory.choices
+        choices=DonationCategory.choices,
+        default=DonationCategory.MONEY
     )
     status = models.CharField(
         max_length=20,
@@ -77,7 +78,13 @@ class GeneralDonation(Donation):
     need_transportation = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
-        self.donation_type = DonationCategory.GENERAL
+        self.donation_category = DonationCategory.GENERAL
+        if self.orphan:
+            self.campaign = None
+            self.donation_type = DonationType.ORPHAN
+        elif self.campaign:
+            self.orphan = None
+            self.donation_type = DonationType.CAMPAIGN
         super().save(*args, **kwargs)
 
 
@@ -88,7 +95,7 @@ class EducationDonation(Donation):
     hours_per_week = models.PositiveIntegerField(default=1)
 
     def save(self, *args, **kwargs):
-        self.donation_type = DonationCategory.EDUCATION
+        self.donation_category = DonationCategory.EDUCATION
         super().save(*args, **kwargs)
 
 
@@ -99,6 +106,7 @@ class MedicalDonation(Donation):
 
     def save(self, *args, **kwargs):
         self.donation_type = DonationCategory.MEDICAL
+        self.donation_category = DonationCategory.MEDICAL
         super().save(*args, **kwargs)
 
 
@@ -110,6 +118,7 @@ class MoneyDonation(Donation):
 
     def save(self, *args, **kwargs):
         self.donation_type = DonationCategory.MONEY
+        self.donation_category = DonationCategory.MONEY
         super().save(*args, **kwargs)
 
 class DonationReport(models.Model):
