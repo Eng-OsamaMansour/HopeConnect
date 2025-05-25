@@ -1,0 +1,1815 @@
+{
+	"info": {
+		"_postman_id": "138adac2-00fb-47bf-85b8-6da4442717e7",
+		"name": "HopeConnect API",
+		"description": "Postman collection to test all HopeConnect backend endpoints.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39599522"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin1@example.com\",\n  \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login",
+								""
+							]
+						},
+						"description": "Obtain JWT access & refresh tokens (no auth required)."
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refresh\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/logout/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout",
+								""
+							]
+						},
+						"description": "Blacklist refresh token and logout."
+					},
+					"response": []
+				}
+			],
+			"description": "This Folder Contains the APIs for login and logout process"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Register user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"DONOR\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/create/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"create",
+								""
+							]
+						},
+						"description": "Create new user (public)."
+					},
+					"response": []
+				},
+				{
+					"name": "List users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MTczOTkzLCJpYXQiOjE3NDgxNzIxOTMsImp0aSI6ImU2NDhhN2QwOTNkMjQ3YTM4ZTFmZDJhYTUwYzY4Zjg3IiwidXNlcl9pZCI6MX0.wwrtRKz2RjMkee7r6efVQ39unG4kMig2qd1y5PfoQt0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"list"
+							]
+						},
+						"description": "List all users (admin only)."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve my profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MTczOTkzLCJpYXQiOjE3NDgxNzIxOTMsImp0aSI6ImU2NDhhN2QwOTNkMjQ3YTM4ZTFmZDJhYTUwYzY4Zjg3IiwidXNlcl9pZCI6MX0.wwrtRKz2RjMkee7r6efVQ39unG4kMig2qd1y5PfoQt0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/me/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"me",
+								""
+							]
+						},
+						"description": "Get specific user by id (self or admin)."
+					},
+					"response": []
+				},
+				{
+					"name": "Update my profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MTczOTkzLCJpYXQiOjE3NDgxNzIxOTMsImp0aSI6ImU2NDhhN2QwOTNkMjQ3YTM4ZTFmZDJhYTUwYzY4Zjg3IiwidXNlcl9pZCI6MX0.wwrtRKz2RjMkee7r6efVQ39unG4kMig2qd1y5PfoQt0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"first_name\": \"someone\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/me/update/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"me",
+								"update",
+								""
+							]
+						},
+						"description": "Partial update (self or admin)."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete my profile (soft)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/1/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"1",
+								""
+							]
+						},
+						"description": "Soft delete user account (self)."
+					},
+					"response": []
+				}
+			],
+			"description": "This Folder Contains the APIs for user management get,creat and update"
+		},
+		{
+			"name": "Donations",
+			"item": [
+				{
+					"name": "Create General Donation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDgzMzc2LCJpYXQiOjE3NDgwODMwNzYsImp0aSI6IjIyYTRmY2VlZmM1NzQ2ZDViNjEwYjU5ODI2N2EwYjZiIiwidXNlcl9pZCI6NH0._560bT2oz6JrXwxwNDYk3Dx2PBzClx_IZbS5JwBJB_k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"orphan\": 12,\n  \"campaign\": null,\n  \"description\": \"Winter clothes\",\n  \"material\": \"Clothes\",\n  \"quantity\": 5,\n  \"need_transportation\": true\n}\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/donations/general/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"donations",
+								"general",
+								""
+							]
+						},
+						"description": "Donor creates a general material donation."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Money Donation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"orphan\": 12,\n  \"campaign\": null,\n  \"amount\": \"100.00\",\n  \"currency\": \"USD\",\n  \"pay_for\": \"EDUCATION\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/donations/money/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"donations",
+								"money",
+								""
+							]
+						},
+						"description": "Donor creates a money donation."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Education Donation ",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDgzMzc2LCJpYXQiOjE3NDgwODMwNzYsImp0aSI6IjIyYTRmY2VlZmM1NzQ2ZDViNjEwYjU5ODI2N2EwYjZiIiwidXNlcl9pZCI6NH0._560bT2oz6JrXwxwNDYk3Dx2PBzClx_IZbS5JwBJB_k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"orphan\": 10,\r\n  //\"campaign\": ,\r\n  \"field\": \"Computer Science\",\r\n  \"course\": \"Python Programming\",\r\n  \"course_duration\": 3 ,\r\n  \"hours_per_week\": 5\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/donations/education/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"donations",
+								"education",
+								""
+							]
+						},
+						"description": "Donor creates a Education donation"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Medical Donation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDYwMTQ2LCJpYXQiOjE3NDgwNTk4NDYsImp0aSI6IjNjMjA1YTBkZTMwMDQzZDk4YzZhZWYwNDdjNWVlMmZlIiwidXNlcl9pZCI6MX0.2d-CmfjZAbl5GzBfi0CrRiht4SytvCeIcwS54D9WM1Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"orphan\": 15,\n  \"campaign\": null,\n  \"supply_type\": \"First Aid Kit\",\n  \"quantity\": 10,\n  \"description\": \"Essential kits including bandages, antiseptics, and gloves.\"\n}\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/donations/medical/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"donations",
+								"medical",
+								""
+							]
+						},
+						"description": "Donor creates a Medical donation"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Donation Report",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"report\": \"Donation delivered successfully.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/donations/1/report/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"donations",
+								"1",
+								"report",
+								""
+							]
+						},
+						"description": "Orphanage/ Admin creates a report for a donation."
+					},
+					"response": []
+				},
+				{
+					"name": "List my Donations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/donations/donor/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"donations",
+								"donor",
+								""
+							]
+						},
+						"description": "List all donations made by the authenticated donor."
+					},
+					"response": []
+				},
+				{
+					"name": "List Donation Reports",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/donations/1/reports/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"donations",
+								"1",
+								"reports",
+								""
+							]
+						},
+						"description": "Donor views reports for a donation."
+					},
+					"response": []
+				},
+				{
+					"name": "Orphan Donations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDYwMTQ2LCJpYXQiOjE3NDgwNTk4NDYsImp0aSI6IjNjMjA1YTBkZTMwMDQzZDk4YzZhZWYwNDdjNWVlMmZlIiwidXNlcl9pZCI6MX0.2d-CmfjZAbl5GzBfi0CrRiht4SytvCeIcwS54D9WM1Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}donations/orphan/1/",
+							"host": [
+								"{{base_url}}donations"
+							],
+							"path": [
+								"orphan",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My Donations Reports",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDYwMTQ2LCJpYXQiOjE3NDgwNTk4NDYsImp0aSI6IjNjMjA1YTBkZTMwMDQzZDk4YzZhZWYwNDdjNWVlMmZlIiwidXNlcl9pZCI6MX0.2d-CmfjZAbl5GzBfi0CrRiht4SytvCeIcwS54D9WM1Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}donations/donor/reports/",
+							"host": [
+								"{{base_url}}donations"
+							],
+							"path": [
+								"donor",
+								"reports",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Donation Status",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"COMPLETED\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/donations/1/status/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"donations",
+								"1",
+								"status",
+								""
+							]
+						},
+						"description": "Admin updates donation status."
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Verification Document",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDYwMTQ2LCJpYXQiOjE3NDgwNTk4NDYsImp0aSI6IjNjMjA1YTBkZTMwMDQzZDk4YzZhZWYwNDdjNWVlMmZlIiwidXNlcl9pZCI6MX0.2d-CmfjZAbl5GzBfi0CrRiht4SytvCeIcwS54D9WM1Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "verification_doc",
+									"type": "file",
+									"src": [],
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}orphanages/3/verify/",
+							"host": [
+								"{{base_url}}orphanages"
+							],
+							"path": [
+								"3",
+								"verify",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "This Folder Contains all APIs for Donations Management"
+		},
+		{
+			"name": "Deliveries",
+			"item": [
+				{
+					"name": "Create Delivery",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"donation\": 1,\n  \"status\":\"PENDING\",\n  \"pickup_location\": {\n    \"latitude\": 32.22,\n    \"longitude\": 35.28\n  },\n  \"dropoff_location\": {\n    \"latitude\": 32.23,\n    \"longitude\": 35.27\n  },\n  \"current_location\": {\n    \"latitude\": 32.22,\n    \"longitude\": 35.28\n  },\n   \"pickup_date\": \"2025-06-01\",\n   \"dropOff_date\": \"2025-06-03\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/deliveries/create/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"deliveries",
+								"create",
+								""
+							]
+						},
+						"description": "Admin creates delivery for a donation."
+					},
+					"response": []
+				},
+				{
+					"name": "List my Deliveries",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDYwMTQ2LCJpYXQiOjE3NDgwNTk4NDYsImp0aSI6IjNjMjA1YTBkZTMwMDQzZDk4YzZhZWYwNDdjNWVlMmZlIiwidXNlcl9pZCI6MX0.2d-CmfjZAbl5GzBfi0CrRiht4SytvCeIcwS54D9WM1Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/deliveries/donor/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"deliveries",
+								"donor",
+								""
+							]
+						},
+						"description": "Donor lists deliveries of their donations."
+					},
+					"response": []
+				},
+				{
+					"name": "List all Deliveries",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDYwMTQ2LCJpYXQiOjE3NDgwNTk4NDYsImp0aSI6IjNjMjA1YTBkZTMwMDQzZDk4YzZhZWYwNDdjNWVlMmZlIiwidXNlcl9pZCI6MX0.2d-CmfjZAbl5GzBfi0CrRiht4SytvCeIcwS54D9WM1Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/deliveries/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"deliveries",
+								""
+							]
+						},
+						"description": "Admin/Logistics list all deliveries."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Delivery Status",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"IN_TRANSIT\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/deliveries/1/status/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"deliveries",
+								"1",
+								"status",
+								""
+							]
+						},
+						"description": "Admin/Logistics updates delivery status."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payments",
+			"item": [
+				{
+					"name": "Create Payment Intent",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"donation_id\": 1,\n  \"amount\": 100,\n  \"currency\": \"USD\",\n  \"payment_method\": \"card\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/payments/create_payment_intent/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"payments",
+								"create_payment_intent",
+								""
+							]
+						},
+						"description": "Create Stripe payment intent for money donation."
+					},
+					"response": []
+				},
+				{
+					"name": "List Payments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/payments/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"payments",
+								""
+							]
+						},
+						"description": "List payments for donor."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve Payment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/payments/1/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"payments",
+								"1",
+								""
+							]
+						},
+						"description": "Get payment details."
+					},
+					"response": []
+				},
+				{
+					"name": "Refund Payment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/payments/1/refund/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"payments",
+								"1",
+								"refund",
+								""
+							]
+						},
+						"description": "Request refund on a payment."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orphans",
+			"item": [
+				{
+					"name": "Create Orphan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"orphanage\": 1,\n  \"national_id\": \"12345678901234\",\n  \"name\": \"Ahmed\",\n  \"gender\": \"M\",\n  \"birth_date\": \"2010-05-23\",\n  \"health_info\": \"Healthy\",\n  \"education_status\": \"Primary\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orphans/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphans",
+								""
+							]
+						},
+						"description": "Orphanage creates a new orphan record."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Orphan Update",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Quarterly progress\",\n  \"note\": \"Doing well in school.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orphans/1/updates/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphans",
+								"1",
+								"updates",
+								""
+							]
+						},
+						"description": "Orphanage posts an update for an orphan."
+					},
+					"response": []
+				},
+				{
+					"name": "Sponsor Orphan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orphans/1/sponsor/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphans",
+								"1",
+								"sponsor",
+								""
+							]
+						},
+						"description": "Donor sponsors an orphan."
+					},
+					"response": []
+				},
+				{
+					"name": "List Orphan Updates",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDYwMTQ2LCJpYXQiOjE3NDgwNTk4NDYsImp0aSI6IjNjMjA1YTBkZTMwMDQzZDk4YzZhZWYwNDdjNWVlMmZlIiwidXNlcl9pZCI6MX0.2d-CmfjZAbl5GzBfi0CrRiht4SytvCeIcwS54D9WM1Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/orphans/1/updates/list/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphans",
+								"1",
+								"updates",
+								"list",
+								""
+							]
+						},
+						"description": "View updates for an orphan."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Sponsorship",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDg5OTkxLCJpYXQiOjE3NDgwODgxOTEsImp0aSI6ImQ1NTllOTE3NzM5ODQ1MWY5NjY0MWM5ODVhOTQ1ODgwIiwidXNlcl9pZCI6NH0.mdfOztc_ya81tz_xUaMLghbRbl0Xab5u4KHqYa12ayw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"orphan\": 12,\n  \"is_active\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orphans/sponsor/cancel/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphans",
+								"sponsor",
+								"cancel",
+								""
+							]
+						},
+						"description": "Donor cancels sponsorship."
+					},
+					"response": []
+				},
+				{
+					"name": "List Of My Sponsors",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDg1OTczLCJpYXQiOjE3NDgwODQxNzMsImp0aSI6IjQyMmExZmJlZTgyNzRmZmQ4MzE5NjdhMGIzZjRhNTk0IiwidXNlcl9pZCI6NH0.jeXlyoxfFY2jz7B78gwjX5waicUgT94OlZkTlHuYc64",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/orphans/sponsors/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphans",
+								"sponsors",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "This Folder Contains All Orphans Managment APIs"
+		},
+		{
+			"name": "Orphanages",
+			"item": [
+				{
+					"name": "Create Orphanage",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Hope Home\",\n  \"city\": \"Nablus\",\n  \"latitude\": 32.22,\n  \"longitude\": 35.26,\n  \"manager\": 3\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orphanages/create/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphanages",
+								"create",
+								""
+							]
+						},
+						"description": "Admin creates orphanage."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Orphanage Review",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"stars\": 5,\n  \"comment\": \"Great care!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orphanages/1/reviews/create/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphanages",
+								"1",
+								"reviews",
+								"create",
+								""
+							]
+						},
+						"description": "Donor reviews an orphanage."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Need Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDYwMTQ2LCJpYXQiOjE3NDgwNTk4NDYsImp0aSI6IjNjMjA1YTBkZTMwMDQzZDk4YzZhZWYwNDdjNWVlMmZlIiwidXNlcl9pZCI6MX0.2d-CmfjZAbl5GzBfi0CrRiht4SytvCeIcwS54D9WM1Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \r\n    \"title\": \"Winter Clothes for Kids\",\r\n    \"description\": \"We need jackets, sweaters, and gloves for 20 children.\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orphanages/need-requests/create/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphanages",
+								"need-requests",
+								"create",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Orphanages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/orphanages/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphanages",
+								""
+							]
+						},
+						"description": "Public list orphanages."
+					},
+					"response": []
+				},
+				{
+					"name": "List Orphanage Reviews",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/orphanages/1/reviews/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphanages",
+								"1",
+								"reviews",
+								""
+							]
+						},
+						"description": "Public list reviews of orphanage."
+					},
+					"response": []
+				},
+				{
+					"name": "Orphanages Needs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/orphanages/need-requests/list/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphanages",
+								"need-requests",
+								"list",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My Requests",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDYwMTQ2LCJpYXQiOjE3NDgwNTk4NDYsImp0aSI6IjNjMjA1YTBkZTMwMDQzZDk4YzZhZWYwNDdjNWVlMmZlIiwidXNlcl9pZCI6MX0.2d-CmfjZAbl5GzBfi0CrRiht4SytvCeIcwS54D9WM1Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/orphanages/need-requests/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphanages",
+								"need-requests",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Orphanage",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"city\": \"Ramallah\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/orphanages/1/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphanages",
+								"1",
+								""
+							]
+						},
+						"description": "Admin/Manager updates orphanage."
+					},
+					"response": []
+				},
+				{
+					"name": "Close a request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MDYwMTQ2LCJpYXQiOjE3NDgwNTk4NDYsImp0aSI6IjNjMjA1YTBkZTMwMDQzZDk4YzZhZWYwNDdjNWVlMmZlIiwidXNlcl9pZCI6MX0.2d-CmfjZAbl5GzBfi0CrRiht4SytvCeIcwS54D9WM1Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/orphanages/need-requests/1/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"orphanages",
+								"need-requests",
+								"1",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Volunteers",
+			"item": [
+				{
+					"name": "Create Volunteer Profile",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"skills\": [\n    \"Teaching\",\n    \"Sports\"\n  ],\n  \"availability\": {\n    \"weekdays\": true\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/volunteers/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"volunteers",
+								""
+							]
+						},
+						"description": "User with Volunteer role creates volunteer profile."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Volunteer Profile",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"skills\": [\n    \"Teaching\",\n    \"Medical\"\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/volunteers/1/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"volunteers",
+								"1",
+								""
+							]
+						},
+						"description": "Volunteer updates own profile."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Volunteer Offer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Math tutoring\",\n  \"description\": \"Can teach math to kids.\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/volunteer-offers/create/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"volunteer-offers",
+								"create",
+								""
+							]
+						},
+						"description": "Volunteer creates offer request."
+					},
+					"response": []
+				},
+				{
+					"name": "List All Offers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/volunteer-offers/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"volunteer-offers",
+								""
+							]
+						},
+						"description": "Admin/Orphanage/Volunteer list offers."
+					},
+					"response": []
+				},
+				{
+					"name": "List My Offers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/volunteer-offers/my-requests/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"volunteer-offers",
+								"my-requests",
+								""
+							]
+						},
+						"description": "Volunteer lists own offers."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Matcher",
+			"item": [
+				{
+					"name": "List Matches",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/matcher/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"matcher",
+								""
+							]
+						},
+						"description": "Get matches (Admin, Orphanage, Volunteer)."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Campagins",
+			"item": [
+				{
+					"name": "Create Campaign",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MTczOTkzLCJpYXQiOjE3NDgxNzIxOTMsImp0aSI6ImU2NDhhN2QwOTNkMjQ3YTM4ZTFmZDJhYTUwYzY4Zjg3IiwidXNlcl9pZCI6MX0.wwrtRKz2RjMkee7r6efVQ39unG4kMig2qd1y5PfoQt0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"ware supplies\",\r\n  \"category\": \"emergency\",\r\n  \"goal_amount\": \"3000.00\",\r\n  \"start\": \"2025-06-01\",\r\n  \"end\": \"2025-09-01\",\r\n  \"is_open\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/campaigns/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"campaigns",
+								""
+							]
+						},
+						"description": "Create a Campaign (Admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "Close Campaign",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MTczOTkzLCJpYXQiOjE3NDgxNzIxOTMsImp0aSI6ImU2NDhhN2QwOTNkMjQ3YTM4ZTFmZDJhYTUwYzY4Zjg3IiwidXNlcl9pZCI6MX0.wwrtRKz2RjMkee7r6efVQ39unG4kMig2qd1y5PfoQt0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"is_open\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/campaigns/13/close/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"campaigns",
+								"13",
+								"close",
+								""
+							]
+						},
+						"description": "Close a Campaign (Admin)"
+					},
+					"response": []
+				},
+				{
+					"name": "List Of Open Campaigns",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/campaigns/open/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"campaigns",
+								"open",
+								""
+							]
+						},
+						"description": "Show All open Campaigns (Any One)"
+					},
+					"response": []
+				},
+				{
+					"name": "Campaign's Donations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MTczOTkzLCJpYXQiOjE3NDgxNzIxOTMsImp0aSI6ImU2NDhhN2QwOTNkMjQ3YTM4ZTFmZDJhYTUwYzY4Zjg3IiwidXNlcl9pZCI6MX0.wwrtRKz2RjMkee7r6efVQ39unG4kMig2qd1y5PfoQt0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/campaigns/1/donations/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"campaigns",
+								"1",
+								"donations",
+								""
+							]
+						},
+						"description": "Show a specific Campaign Donations(Admin)"
+					},
+					"response": []
+				}
+			],
+			"description": "This Folder Contains All campaigns managment APIs"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000"
+		},
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "refresh_token",
+			"value": ""
+		}
+	]
+}
