@@ -1,7 +1,7 @@
 digraph model_graph {
   // Dotfile by Django-Extensions graph_models
-  // Created: 2025-05-18 21:44
-  // Cli Options: accounts campaigns donations common logistics orphanages volunteers --dot -o my_apps.dot
+  // Created: 2025-05-24 19:53
+  // Cli Options: accounts campaigns donations logistics matcher orphan orphanages payment volunteers -o my_apps.dot
 
   fontname = "Roboto"
   fontsize = 8
@@ -23,12 +23,72 @@ digraph model_graph {
   // Labels
 
 
-  django_contrib_auth_models_AbstractUser [label=<
+  django_contrib_auth_models_PermissionsMixin [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    AbstractUser<BR/>&lt;<FONT FACE="Roboto"><I>AbstractBaseUser,PermissionsMixin</I></FONT>&gt;
+    PermissionsMixin
     </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">is_superuser</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  django_contrib_auth_base_user_AbstractBaseUser [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    AbstractBaseUser
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">last_login</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">password</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  accounts_models_User [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    User<BR/>&lt;<FONT FACE="Roboto"><I>AbstractBaseUser,PermissionsMixin</I></FONT>&gt;
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
@@ -40,9 +100,9 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">email</FONT>
+    <FONT FACE="Roboto">email</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">EmailField</FONT>
+    <FONT FACE="Roboto">EmailField</FONT>
     </TD></TR>
   
   
@@ -104,27 +164,17 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">username</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">phone_number</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">CharField</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   
-    </TABLE>
-    >]
-
-  common_models_TimeStampedModel [label=<
-    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
-    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
-    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    TimeStampedModel
-    </B></FONT></TD></TR>
-  
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">created_at</FONT>
+    <FONT FACE="Roboto">role</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">DateTimeField</FONT>
+    <FONT FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   
@@ -139,237 +189,21 @@ digraph model_graph {
     </TABLE>
     >]
 
-  common_models_UUIDModel [label=<
-    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
-    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
-    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    UUIDModel
-    </B></FONT></TD></TR>
-  
-    </TABLE>
-    >]
 
-  accounts_models_User [label=<
+
+
+  campaigns_models_Campaign [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    User<BR/>&lt;<FONT FACE="Roboto"><I>UUIDModel,AbstractUser,TimeStampedModel</I></FONT>&gt;
+    Campaign
     </B></FONT></TD></TR>
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I><B>id</B></I></FONT>
+    <FONT FACE="Roboto"><B>id</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I><B>UUIDField</B></I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>date_joined</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">email</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">EmailField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>first_name</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>CharField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_staff</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_superuser</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>last_login</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>last_name</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>CharField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>password</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>CharField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">role</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">CharField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-    </TABLE>
-    >]
-
-
-
-
-  common_models_BaseModel [label=<
-    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
-    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
-    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    BaseModel<BR/>&lt;<FONT FACE="Roboto"><I>UUIDModel,TimeStampedModel,SoftDeleteModel</I></FONT>&gt;
-    </B></FONT></TD></TR>
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-    </TABLE>
-    >]
-
-  donations_models_Donor [label=<
-    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
-    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
-    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    Donor<BR/>&lt;<FONT FACE="Roboto"><I>BaseModel</I></FONT>&gt;
-    </B></FONT></TD></TR>
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I><B>id</B></I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I><B>UUIDField</B></I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>user</B></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><B>OneToOneField (id)</B></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">preferred_payment_token</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-    </TABLE>
-    >]
-
-  donations_models_Campaign [label=<
-    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
-    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
-    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    Campaign<BR/>&lt;<FONT FACE="Roboto"><I>BaseModel</I></FONT>&gt;
-    </B></FONT></TD></TR>
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I><B>id</B></I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I><B>UUIDField</B></I></FONT>
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
     </TD></TR>
   
   
@@ -383,9 +217,9 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
     </TD></TR>
   
   
@@ -402,14 +236,6 @@ digraph model_graph {
     <FONT FACE="Roboto">goal_amount</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto">DecimalField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
     </TD></TR>
   
   
@@ -437,29 +263,24 @@ digraph model_graph {
     </TD></TR>
   
   
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
     </TABLE>
     >]
+
+
+
 
   donations_models_Donation [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    Donation<BR/>&lt;<FONT FACE="Roboto"><I>BaseModel</I></FONT>&gt;
+    Donation
     </B></FONT></TD></TR>
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I><B>id</B></I></FONT>
+    <FONT FACE="Roboto"><B>id</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I><B>UUIDField</B></I></FONT>
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
     </TD></TR>
   
   
@@ -481,49 +302,41 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">amount</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>orphan</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">donation_category</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">donation_type</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">platform_fee</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto">DecimalField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">category</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">CharField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">currency</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">CharField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">payment_intent_id</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   
@@ -535,61 +348,129 @@ digraph model_graph {
     </TD></TR>
   
   
+    </TABLE>
+    >]
+
+  donations_models_GeneralDonation [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    GeneralDonation
+    </B></FONT></TD></TR>
+  
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
+    <FONT FACE="Roboto"><B>donation_ptr</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
+    <FONT FACE="Roboto"><B>OneToOneField (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">description</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">TextField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">material</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">need_transportation</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">quantity</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">PositiveIntegerField</FONT>
     </TD></TR>
   
   
     </TABLE>
     >]
 
-  donations_models_DonationItem [label=<
+  donations_models_EducationDonation [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    DonationItem<BR/>&lt;<FONT FACE="Roboto"><I>BaseModel</I></FONT>&gt;
+    EducationDonation
     </B></FONT></TD></TR>
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I><B>id</B></I></FONT>
+    <FONT FACE="Roboto"><B>donation_ptr</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I><B>UUIDField</B></I></FONT>
+    <FONT FACE="Roboto"><B>OneToOneField (id)</B></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>donation</B></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">course</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
+    <FONT FACE="Roboto">course_duration</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
+    <FONT FACE="Roboto">PositiveIntegerField</FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">description</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">field</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">CharField</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
+    <FONT FACE="Roboto">hours_per_week</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
+    <FONT FACE="Roboto">PositiveIntegerField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  donations_models_MedicalDonation [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    MedicalDonation
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>donation_ptr</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>OneToOneField (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">description</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">TextField</FONT>
     </TD></TR>
   
   
@@ -603,81 +484,33 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">unit</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">supply_type</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">CharField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   
     </TABLE>
     >]
 
-  donations_models_OrphanSponsor [label=<
+  donations_models_MoneyDonation [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    OrphanSponsor<BR/>&lt;<FONT FACE="Roboto"><I>BaseModel</I></FONT>&gt;
+    MoneyDonation
     </B></FONT></TD></TR>
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I><B>id</B></I></FONT>
+    <FONT FACE="Roboto"><B>donation_ptr</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I><B>UUIDField</B></I></FONT>
+    <FONT FACE="Roboto"><B>OneToOneField (id)</B></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>donor</B></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>orphan</B></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">end_date</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">DateField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">monthly_amount</FONT>
+    <FONT FACE="Roboto">amount</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto">DecimalField</FONT>
     </TD></TR>
@@ -685,17 +518,67 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">start_date</FONT>
+    <FONT FACE="Roboto">currency</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">DateField</FONT>
+    <FONT FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">pay_for</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">payment_intent_id</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  donations_models_DonationReport [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    DonationReport
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>donation</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">report</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">TextField</FONT>
     </TD></TR>
   
   
@@ -705,34 +588,34 @@ digraph model_graph {
 
 
 
-  common_models_BaseModel [label=<
+  logistics_models_Location [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    BaseModel<BR/>&lt;<FONT FACE="Roboto"><I>UUIDModel,TimeStampedModel,SoftDeleteModel</I></FONT>&gt;
+    Location
     </B></FONT></TD></TR>
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
+    <FONT FACE="Roboto"><B>id</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
+    <FONT FACE="Roboto">latitude</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
+    <FONT FACE="Roboto">FloatField</FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
+    <FONT FACE="Roboto">longitude</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
+    <FONT FACE="Roboto">FloatField</FONT>
     </TD></TR>
   
   
@@ -743,14 +626,22 @@ digraph model_graph {
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    Delivery<BR/>&lt;<FONT FACE="Roboto"><I>BaseModel</I></FONT>&gt;
+    Delivery
     </B></FONT></TD></TR>
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I><B>id</B></I></FONT>
+    <FONT FACE="Roboto"><B>id</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I><B>UUIDField</B></I></FONT>
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>current_location</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
   
   
@@ -764,41 +655,41 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">courier_tracking</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>dropOff_location</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>pickup_location</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">dropoff_latlng</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">CharField</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">dropOff_date</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateField</FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">pickup_latlng</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">pickup_date</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">CharField</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateField</FONT>
     </TD></TR>
   
   
@@ -812,9 +703,9 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">updated_at</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
     </TD></TR>
   
   
@@ -824,134 +715,71 @@ digraph model_graph {
 
 
 
-  common_models_BaseModel [label=<
+  matcher_models_Matcher [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    BaseModel<BR/>&lt;<FONT FACE="Roboto"><I>UUIDModel,TimeStampedModel,SoftDeleteModel</I></FONT>&gt;
+    Matcher
     </B></FONT></TD></TR>
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
+    <FONT FACE="Roboto"><B>id</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
+    <FONT FACE="Roboto"><B>need_request</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
+    <FONT FACE="Roboto"><B>volunteer_offer</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-    </TABLE>
-    >]
-
-  orphanages_models_Orphanage [label=<
-    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
-    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
-    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    Orphanage<BR/>&lt;<FONT FACE="Roboto"><I>BaseModel</I></FONT>&gt;
-    </B></FONT></TD></TR>
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I><B>id</B></I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I><B>UUIDField</B></I></FONT>
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>manager</B></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><B>OneToOneField (id)</B></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">city</FONT>
+    <FONT FACE="Roboto">offer_status</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">latitude</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">DecimalField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">longitude</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">DecimalField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">name</FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">CharField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
     </TABLE>
     >]
 
-  orphanages_models_Orphan [label=<
+
+
+
+  orphan_models_Orphan [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    Orphan<BR/>&lt;<FONT FACE="Roboto"><I>BaseModel</I></FONT>&gt;
+    Orphan
     </B></FONT></TD></TR>
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I><B>id</B></I></FONT>
+    <FONT FACE="Roboto"><B>id</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I><B>UUIDField</B></I></FONT>
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
     </TD></TR>
   
   
@@ -968,14 +796,6 @@ digraph model_graph {
     <FONT COLOR="#7B7B7B" FACE="Roboto">birth_date</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT COLOR="#7B7B7B" FACE="Roboto">DateField</FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
     </TD></TR>
   
   
@@ -1005,15 +825,15 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
+    <FONT FACE="Roboto">name</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
+    <FONT FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">name</FONT>
+    <FONT FACE="Roboto">national_id</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto">CharField</FONT>
     </TD></TR>
@@ -1027,66 +847,434 @@ digraph model_graph {
     </TD></TR>
   
   
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
     </TABLE>
     >]
 
-
-
-
-  common_models_BaseModel [label=<
+  orphan_models_OrphanSponsor [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    BaseModel<BR/>&lt;<FONT FACE="Roboto"><I>UUIDModel,TimeStampedModel,SoftDeleteModel</I></FONT>&gt;
+    OrphanSponsor
     </B></FONT></TD></TR>
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
+    <FONT FACE="Roboto"><B>id</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
+    <FONT FACE="Roboto"><B>donor</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
+    <FONT FACE="Roboto"><B>orphan</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">is_active</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">BooleanField</FONT>
     </TD></TR>
   
   
     </TABLE>
     >]
+
+  orphan_models_OrphanUpdate [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    OrphanUpdate
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>orphan</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">note</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">TextField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">photo</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">ImageField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">title</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+
+
+
+  orphanages_models_Orphanage [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Orphanage
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>manager</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>OneToOneField (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">city</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">is_public_approved</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">latitude</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DecimalField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">longitude</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DecimalField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">name</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">verification_doc</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">FileField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  orphanages_models_OrphanageNeedRequest [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    OrphanageNeedRequest
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>orphanage</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">description</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">TextField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">embedding</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">TextField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">is_open</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">title</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  orphanages_models_Review [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Review
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>donor</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>orphanage</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">comment</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">TextField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">stars</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">PositiveSmallIntegerField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+
+
+
+  payment_models_Payment [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    Payment
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>donation</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (donation_ptr)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">amount</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">DecimalField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">client_secret</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">currency</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">error_message</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">TextField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">payment_intent_id</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">payment_method</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">status</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">updated_at</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+
+
 
   volunteers_models_Volunteer [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    Volunteer<BR/>&lt;<FONT FACE="Roboto"><I>BaseModel</I></FONT>&gt;
+    Volunteer
     </B></FONT></TD></TR>
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I><B>id</B></I></FONT>
+    <FONT FACE="Roboto"><B>id</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I><B>UUIDField</B></I></FONT>
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
     </TD></TR>
   
   
@@ -1108,57 +1296,33 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
     <FONT COLOR="#7B7B7B" FACE="Roboto">skills</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT COLOR="#7B7B7B" FACE="Roboto">JSONField</FONT>
     </TD></TR>
   
   
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
     </TABLE>
     >]
 
-  volunteers_models_VolunteerRequest [label=<
+  volunteers_models_VolunteerOfferRequest [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    VolunteerRequest<BR/>&lt;<FONT FACE="Roboto"><I>BaseModel</I></FONT>&gt;
+    VolunteerOfferRequest
     </B></FONT></TD></TR>
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I><B>id</B></I></FONT>
+    <FONT FACE="Roboto"><B>id</B></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I><B>UUIDField</B></I></FONT>
+    <FONT FACE="Roboto"><B>BigAutoField</B></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>orphanage</B></FONT>
+    <FONT FACE="Roboto"><B>volunteer</B></FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
@@ -1166,33 +1330,33 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>volunteer</B></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>created_at</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>DateTimeField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><I>is_active</I></FONT>
-    </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><I>BooleanField</I></FONT>
-    </TD></TR>
-  
-  
-  
-    <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">need_description</FONT>
+    <FONT FACE="Roboto">description</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto">TextField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">embedding</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">TextField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">is_open</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">BooleanField</FONT>
     </TD></TR>
   
   
@@ -1206,9 +1370,9 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>updated_at</I></FONT>
+    <FONT FACE="Roboto">title</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
+    <FONT FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   
@@ -1219,24 +1383,6 @@ digraph model_graph {
 
 
   // Relations
-  django_contrib_auth_base_user_AbstractBaseUser [label=<
-  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
-  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
-  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">AbstractBaseUser</FONT>
-  </TD></TR>
-  </TABLE>
-  >]
-  django_contrib_auth_models_AbstractUser -> django_contrib_auth_base_user_AbstractBaseUser
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
-  django_contrib_auth_models_PermissionsMixin [label=<
-  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
-  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
-  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">PermissionsMixin</FONT>
-  </TD></TR>
-  </TABLE>
-  >]
-  django_contrib_auth_models_AbstractUser -> django_contrib_auth_models_PermissionsMixin
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
   django_contrib_auth_models_Group [label=<
   <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
   <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
@@ -1256,144 +1402,94 @@ digraph model_graph {
   accounts_models_User -> django_contrib_auth_models_Permission
   [label=" user_permissions (user)"] [arrowhead=dot arrowtail=dot, dir=both];
 
-  accounts_models_User -> common_models_UUIDModel
+  accounts_models_User -> django_contrib_auth_base_user_AbstractBaseUser
   [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
-  accounts_models_User -> django_contrib_auth_models_AbstractUser
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
-
-  accounts_models_User -> common_models_TimeStampedModel
+  accounts_models_User -> django_contrib_auth_models_PermissionsMixin
   [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
 
-  common_models_BaseModel -> common_models_UUIDModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
-  common_models_BaseModel -> common_models_TimeStampedModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
-  common_models_SoftDeleteModel [label=<
-  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
-  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
-  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">SoftDeleteModel</FONT>
-  </TD></TR>
-  </TABLE>
-  >]
-  common_models_BaseModel -> common_models_SoftDeleteModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
-
-  donations_models_Donor -> accounts_models_User
-  [label=" user (donor)"] [arrowhead=none, arrowtail=none, dir=both];
-
-  donations_models_Donor -> common_models_BaseModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
-
-  donations_models_Campaign -> common_models_BaseModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
-
-  donations_models_Donation -> donations_models_Donor
+  donations_models_Donation -> accounts_models_User
   [label=" donor (donations)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  donations_models_Donation -> donations_models_Campaign
+  donations_models_Donation -> orphan_models_Orphan
+  [label=" orphan (donations)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  donations_models_Donation -> campaigns_models_Campaign
   [label=" campaign (donations)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  donations_models_Donation -> common_models_BaseModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+  donations_models_GeneralDonation -> donations_models_Donation
+  [label=" multi-table\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
-  donations_models_DonationItem -> donations_models_Donation
-  [label=" donation (items)"] [arrowhead=none, arrowtail=dot, dir=both];
+  donations_models_EducationDonation -> donations_models_Donation
+  [label=" multi-table\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
-  donations_models_DonationItem -> common_models_BaseModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+  donations_models_MedicalDonation -> donations_models_Donation
+  [label=" multi-table\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
-  donations_models_OrphanSponsor -> orphanages_models_Orphan
-  [label=" orphan (sponsors)"] [arrowhead=none, arrowtail=dot, dir=both];
+  donations_models_MoneyDonation -> donations_models_Donation
+  [label=" multi-table\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
-  donations_models_OrphanSponsor -> donations_models_Donor
-  [label=" donor (sponsorships)"] [arrowhead=none, arrowtail=dot, dir=both];
+  donations_models_DonationReport -> donations_models_Donation
+  [label=" donation (reports)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  donations_models_OrphanSponsor -> common_models_BaseModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
-
-
-  common_models_BaseModel -> common_models_UUIDModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
-
-  common_models_BaseModel -> common_models_TimeStampedModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
-  common_models_SoftDeleteModel [label=<
-  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
-  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
-  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">SoftDeleteModel</FONT>
-  </TD></TR>
-  </TABLE>
-  >]
-  common_models_BaseModel -> common_models_SoftDeleteModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
   logistics_models_Delivery -> donations_models_Donation
   [label=" donation (delivery)"] [arrowhead=none, arrowtail=none, dir=both];
 
-  logistics_models_Delivery -> common_models_BaseModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+  logistics_models_Delivery -> logistics_models_Location
+  [label=" pickup_location (pickup_deliveries)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  logistics_models_Delivery -> logistics_models_Location
+  [label=" dropOff_location (dropOff_deliveries)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  logistics_models_Delivery -> logistics_models_Location
+  [label=" current_location (current_deliveries)"] [arrowhead=none, arrowtail=dot, dir=both];
 
 
-  common_models_BaseModel -> common_models_UUIDModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+  matcher_models_Matcher -> orphanages_models_OrphanageNeedRequest
+  [label=" need_request (matcher)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  common_models_BaseModel -> common_models_TimeStampedModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
-  common_models_SoftDeleteModel [label=<
-  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
-  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
-  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">SoftDeleteModel</FONT>
-  </TD></TR>
-  </TABLE>
-  >]
-  common_models_BaseModel -> common_models_SoftDeleteModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+  matcher_models_Matcher -> volunteers_models_VolunteerOfferRequest
+  [label=" volunteer_offer (matcher)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+
+  orphan_models_Orphan -> orphanages_models_Orphanage
+  [label=" orphanage (orphans)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  orphan_models_OrphanSponsor -> orphan_models_Orphan
+  [label=" orphan (sponsors)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  orphan_models_OrphanSponsor -> accounts_models_User
+  [label=" donor (sponsorships)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  orphan_models_OrphanUpdate -> orphan_models_Orphan
+  [label=" orphan (updates)"] [arrowhead=none, arrowtail=dot, dir=both];
+
 
   orphanages_models_Orphanage -> accounts_models_User
   [label=" manager (orphanage)"] [arrowhead=none, arrowtail=none, dir=both];
 
-  orphanages_models_Orphanage -> common_models_BaseModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+  orphanages_models_OrphanageNeedRequest -> orphanages_models_Orphanage
+  [label=" orphanage (need_requests)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  orphanages_models_Orphan -> orphanages_models_Orphanage
-  [label=" orphanage (orphans)"] [arrowhead=none, arrowtail=dot, dir=both];
+  orphanages_models_Review -> orphanages_models_Orphanage
+  [label=" orphanage (reviews)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  orphanages_models_Orphan -> common_models_BaseModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+  orphanages_models_Review -> accounts_models_User
+  [label=" donor (review)"] [arrowhead=none, arrowtail=dot, dir=both];
 
 
-  common_models_BaseModel -> common_models_UUIDModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+  payment_models_Payment -> donations_models_MoneyDonation
+  [label=" donation (payments)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  common_models_BaseModel -> common_models_TimeStampedModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
-  common_models_SoftDeleteModel [label=<
-  <TABLE BGCOLOR="white" BORDER="0" CELLBORDER="0" CELLSPACING="0">
-  <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="#1b563f">
-  <FONT FACE="Roboto" POINT-SIZE="12" COLOR="white">SoftDeleteModel</FONT>
-  </TD></TR>
-  </TABLE>
-  >]
-  common_models_BaseModel -> common_models_SoftDeleteModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
   volunteers_models_Volunteer -> accounts_models_User
   [label=" user (volunteer)"] [arrowhead=none, arrowtail=none, dir=both];
 
-  volunteers_models_Volunteer -> common_models_BaseModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
-
-  volunteers_models_VolunteerRequest -> orphanages_models_Orphanage
-  [label=" orphanage (requests)"] [arrowhead=none, arrowtail=dot, dir=both];
-
-  volunteers_models_VolunteerRequest -> volunteers_models_Volunteer
-  [label=" volunteer (assignments)"] [arrowhead=none, arrowtail=dot, dir=both];
-
-  volunteers_models_VolunteerRequest -> common_models_BaseModel
-  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+  volunteers_models_VolunteerOfferRequest -> volunteers_models_Volunteer
+  [label=" volunteer (offer_requests)"] [arrowhead=none, arrowtail=dot, dir=both];
 
 
 }

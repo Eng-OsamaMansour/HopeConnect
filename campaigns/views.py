@@ -49,5 +49,5 @@ class CampaignDonationsListView(generics.ListAPIView):
     permission_classes = [IsAdmin]
 
     def get_queryset(self):
-        campaign = self.get_object()
+        campaign = Campaign.objects.get(id = self.kwargs['pk'])
         return Donation.objects.filter(campaign=campaign)

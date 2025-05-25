@@ -3548,6 +3548,9 @@ class CampaignsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'campaigns'
 
+    def ready(self):
+        import campaigns.signals
+
 
 
 --- FILE: campaigns\models.py ---
@@ -3583,7 +3586,30 @@ from donations.models import Campaign
 class CampaignSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Campaign
-        fields = ("id", "title", "goal_amount", "start", "end", "is_open")
+        fields = ("id", "title", "goal_amount", "start", "end", "category", "is_open")
+
+
+--- FILE: campaigns\signals.py ---
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .models import Campaign, CampaignCategory
+from .tasks import notify_new_emergency_campaign
+import os
+IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
+
+@receiver(post_save, sender=Campaign)
+def campaign_post_save(sender, instance, created, **kwargs):
+    # Skip sending emails during seeding
+    if IS_SEEDING:
+        return
+    try:
+        if created and instance.category == CampaignCategory.EMERGENCY:
+            notify_new_emergency_campaign.delay(instance.id)
+            print("Sent email to all users")
+    except Exception as e:
+        raise e
+
 
 
 --- FILE: campaigns\tasks.py ---
@@ -3639,16 +3665,6 @@ def notify_new_emergency_campaign(campaign_id):
     except Campaign.DoesNotExist:
         return "Campaign not found"
 
-@receiver(post_save, sender=Campaign)
-def campaign_post_save(sender, instance, created, **kwargs):
-    # Skip sending emails during seeding
-    if IS_SEEDING:
-        return
-    try:
-        if created and instance.campaign_type == 'EMERGENCY':
-            notify_new_emergency_campaign.delay(instance.id)
-    except Exception as e:
-        raise e
 
 
 
@@ -3664,7 +3680,8 @@ from django.test import TestCase
 --- FILE: campaigns\views.py ---
 
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from accounts.permissions import IsAdmin
 from rest_framework.response import Response
 from .models import Campaign
 from donations.models import Donation
@@ -3677,7 +3694,7 @@ from donations.serializers import DonationSerializer
 class CampaignCreateView(generics.CreateAPIView):
     queryset = Campaign.objects.all()
     serializer_class = CampaignSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdmin]
 
 # URL: /api/campaigns/<id>/close/
 # Method: PATCH
@@ -3685,7 +3702,7 @@ class CampaignCreateView(generics.CreateAPIView):
 class CampaignCloseView(generics.UpdateAPIView):
     queryset = Campaign.objects.all()
     serializer_class = CampaignSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdmin]
 
     def patch(self, request, *args, **kwargs):
         campaign = self.get_object()
@@ -3710,10 +3727,10 @@ class OpenCampaignsListView(generics.ListAPIView):
 # Admin can view donations for a campaign
 class CampaignDonationsListView(generics.ListAPIView):
     serializer_class = DonationSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdmin]
 
     def get_queryset(self):
-        campaign = self.get_object()
+        campaign = Campaign.objects.get(id = self.kwargs['pk'])
         return Donation.objects.filter(campaign=campaign)
 
 
@@ -3736,6 +3753,10 @@ from django.apps import AppConfig
 class DonationsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'donations'
+
+    def ready(self):
+        import donations.signals
+
 
 
 --- FILE: donations\models.py ---
@@ -3950,6 +3971,29 @@ class DonationReportSerializer(serializers.ModelSerializer):
 
 
 
+
+
+--- FILE: donations\signals.py ---
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .models import DonationReport
+from .tasks import send_donation_report_email
+import os
+
+IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
+
+@receiver(post_save, sender=DonationReport)
+def donation_report_post_save(sender, instance, created, **kwargs):
+    # Skip sending emails during seeding
+    if IS_SEEDING:
+        return
+                
+    try:
+        if created:
+            send_donation_report_email.delay(instance.id)
+    except Exception as e:
+        raise e
 
 
 --- FILE: donations\tasks.py ---
@@ -4514,6 +4558,9 @@ CHANNEL_LAYERS = {
     }
 }
 
+CELERY_BROKER_URL = "redis://hope_redis:6379/0"
+
+
 
 load_dotenv()
 STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
@@ -4611,8 +4658,7 @@ class LogisticsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'logistics'
     def ready(self):
-        import logistics.tasks 
-
+        import logistics.signals
 
 
 --- FILE: logistics\models.py ---
@@ -4665,6 +4711,33 @@ class LocationSerializer(serializers.ModelSerializer):
 
 
 
+
+
+--- FILE: logistics\signals.py ---
+
+from django.db.models.signals import post_save
+from .models import Delivery
+from .tasks import send_delivery_creation_email, send_delivery_status_update_email, send_delivery_location_update_email
+from django.dispatch import receiver
+import os
+IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
+
+
+@receiver(post_save, sender=Delivery)
+def delivery_post_save(sender, instance, created, **kwargs):
+    # Skip sending emails during seeding
+    if IS_SEEDING:
+        return        
+    try:
+        if created:
+            send_delivery_creation_email.delay(instance.id)
+        else:
+            if instance.tracker.has_changed('status'):
+                send_delivery_status_update_email.delay(instance.id)
+            if instance.tracker.has_changed('current_location'):
+                send_delivery_location_update_email.delay(instance.id)
+    except Exception as e:
+        raise e
 
 
 --- FILE: logistics\tasks.py ---
@@ -4780,21 +4853,7 @@ The HopeConnect Support Team
     except Delivery.DoesNotExist:
         pass
 
-@receiver(post_save, sender=Delivery)
-def delivery_post_save(sender, instance, created, **kwargs):
-    # Skip sending emails during seeding
-    if IS_SEEDING:
-        return        
-    try:
-        if created:
-            send_delivery_creation_email.delay(instance.id)
-        else:
-            if instance.tracker.has_changed('status'):
-                send_delivery_status_update_email.delay(instance.id)
-            if instance.tracker.has_changed('current_location'):
-                send_delivery_location_update_email.delay(instance.id)
-    except Exception as e:
-        raise e
+
 
 
 
@@ -4904,6 +4963,9 @@ class MatcherConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'matcher'
 
+    def ready(self):
+        import matcher.signal
+
 
 
 --- FILE: matcher\embeddings.py ---
@@ -4933,10 +4995,16 @@ from django.db import models
 from orphanages.models import OrphanageNeedRequest
 from volunteers.models import VolunteerOfferRequest
 
+class OfferStatus(models.TextChoices):
+    OPEN = "OPEN"
+    MATCHED = "MATCHED"
+    CLOSED = "CLOSED"
+
 class Matcher(models.Model):
     need_request = models.ForeignKey(OrphanageNeedRequest, on_delete=models.CASCADE)
     volunteer_offer = models.ForeignKey(VolunteerOfferRequest, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    offer_status = models.CharField(max_length=20, choices=OfferStatus.choices, default=OfferStatus.OPEN)
 
 
 
@@ -4952,42 +5020,69 @@ class MatcherSerializer(serializers.ModelSerializer):
 
 
 
+--- FILE: matcher\signal.py ---
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from orphanages.models import OrphanageNeedRequest
+from volunteers.models import VolunteerOfferRequest
+from .tasks import run_semantic_matching
+
+@receiver(post_save, sender=OrphanageNeedRequest)
+@receiver(post_save, sender=VolunteerOfferRequest)
+def kick_matcher(sender, instance, created, **kwargs):
+    if instance.embedding:  # only run matcher if embedding is already set
+        print(f"✅ Signal triggered for {sender.__name__}")
+        run_semantic_matching.delay()
+
+
+
+
 --- FILE: matcher\tasks.py ---
 
-from venv import logger
 from celery import shared_task
-from django.db.models import Q
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from scipy.spatial.distance import cosine
 from orphanages.models import OrphanageNeedRequest
 from volunteers.models import VolunteerOfferRequest
 from django.core.mail import send_mail
 from django.conf import settings
-from django.db.models.signals import post_save
+import numpy as np
 import os
+import json
 
-from .models import (
-    Matcher,
-    OfferStatus,
-    Match
-)
+from .models import Matcher, OfferStatus
+
 SIMILARITY_THRESHOLD = 0.75
-
-# Flag to check if we're in seeding mode
 IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
+
 
 @shared_task
 def run_semantic_matching():
-    needs  = OrphanageNeedRequest.objects.filter(is_open=True, embedding__isnull=False)
+    needs = OrphanageNeedRequest.objects.filter(is_open=True, embedding__isnull=False)
     offers = VolunteerOfferRequest.objects.filter(is_open=True, status=OfferStatus.OPEN, embedding__isnull=False)
 
     for need in needs:
+        try:
+            need_vec = parse_embedding(need.embedding)
+        except Exception as e:
+            print(f"❌ Error parsing need embedding: {e}")
+            continue
+
         best_offer = None
-        best_score = 1.0  
+        best_score = 1.0
+
         for offer in offers:
             if Matcher.objects.filter(need_request=need, volunteer_offer=offer).exists():
                 continue
-            dist = cosine(need.embedding, offer.embedding)
+            try:
+                offer_vec = parse_embedding(offer.embedding)
+                dist = cosine(need_vec, offer_vec)
+            except Exception as e:
+                print(f"❌ Error parsing offer embedding: {e}")
+                continue
+
             if dist < best_score:
                 best_score = dist
                 best_offer = offer
@@ -5000,17 +5095,28 @@ def run_semantic_matching():
             best_offer.status = OfferStatus.MATCHED
             best_offer.is_open = False
             best_offer.save(update_fields=["status", "is_open"])
-
             need.is_open = False
             need.save(update_fields=["is_open"])
+
+
+def parse_embedding(raw):
+    """
+    Converts stored JSON string to 1D NumPy array.
+    """
+    arr = np.array(json.loads(raw))
+    if arr.ndim > 1:
+        arr = arr.flatten()
+    if arr.ndim != 1:
+        raise ValueError("Embedding must be 1-D after flattening.")
+    return arr
+
 
 @shared_task
 def send_match_notification_email(match_id):
     if IS_SEEDING:
         return
     try:
-        match = Match.objects.get(id=match_id)
-        
+        match = Matcher.objects.get(id=match_id)
         subject = 'New Match Found!'
         message = f"""
 Dear {match.user.get_full_name()},
@@ -5027,7 +5133,6 @@ Please log in to your account to view the full details of this match.
 Best regards,
 The HopeConnect Support Team
         """
-
         send_mail(
             subject,
             message,
@@ -5035,27 +5140,18 @@ The HopeConnect Support Team
             [match.user.email],
             fail_silently=False,
         )
-        print("Match Notification Email Sent to: ", match.user.email)
-    except Match.DoesNotExist:
+        print("📧 Match Notification Email Sent to:", match.user.email)
+    except Matcher.DoesNotExist:
         pass
 
-@receiver(post_save, sender=Match)
+
+@receiver(post_save, sender=Matcher)
 def match_post_save(sender, instance, created, **kwargs):
-    # Skip sending emails during seeding
     if IS_SEEDING:
         return
+    if created:
+        send_match_notification_email.delay(instance.id)
 
-    try:
-        if created:
-            send_match_notification_email.delay(instance.id)
-    except Exception as e:
-        raise e
-
-@receiver(post_save, sender=OrphanageNeedRequest)
-@receiver(post_save, sender=VolunteerOfferRequest)
-def kick_matcher(sender, **kwargs):
-    print("Kicking matcher")
-    run_semantic_matching.delay()
 
 
 --- FILE: matcher\tests.py ---
@@ -5130,6 +5226,9 @@ from django.apps import AppConfig
 class OrphanConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'orphan'
+
+    def ready(self):
+        import orphan.signals
 
 
 
@@ -5216,13 +5315,35 @@ class OrphanSponsorSerializer(serializers.ModelSerializer):
         return data
 
 
+--- FILE: orphan\signals.py ---
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .models import OrphanUpdate
+from .tasks import notify_sponsor_of_update
+import os
+
+IS_SEEDING = os.environ.get('DJANGO_SEEDING', 'False').lower() == 'true'
+
+@receiver(post_save, sender=OrphanUpdate)
+def orphan_update_post_save(sender, instance, created, **kwargs):
+    # Skip sending emails during seeding
+    if IS_SEEDING:
+        return
+        
+    try:
+        if created and instance.orphan.sponsor:
+            notify_sponsor_of_update.delay(instance.id)
+    except Exception as e:
+        raise e
+
+
 --- FILE: orphan\tasks.py ---
 
 from celery import shared_task
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import OrphanUpdate
-from donations.models import Sponsorship
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import os
@@ -5266,17 +5387,7 @@ The HopeConnect Support Team
     except OrphanUpdate.DoesNotExist:
         pass
 
-@receiver(post_save, sender=OrphanUpdate)
-def orphan_update_post_save(sender, instance, created, **kwargs):
-    # Skip sending emails during seeding
-    if IS_SEEDING:
-        return
-        
-    try:
-        if created and instance.orphan.sponsor:
-            notify_sponsor_of_update.delay(instance.id)
-    except Exception as e:
-        raise e
+
 
 
 --- FILE: orphan\tests.py ---
@@ -5421,20 +5532,21 @@ class Orphanage(models.Model):
         return self.name
 
 class OrphanageNeedRequest(models.Model):
-    orphanage = models.ForeignKey("Orphanage",on_delete=models.CASCADE,related_name="need_requests")
+    orphanage = models.ForeignKey("Orphanage", on_delete=models.CASCADE, related_name="need_requests")
     title = models.CharField(max_length=255)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     embedding = models.TextField(null=True, blank=True)
     is_open = models.BooleanField(default=True)
+
     def __str__(self):
         return f"{self.orphanage} – {self.title}"
+
     def save(self, *args, **kwargs):
         text = f"{self.title}. {self.description}"
-        embedding_list = embed_text(text).tolist()
+        embedding_list = embed_text(text).tolist()  # Should return 1D list
         self.embedding = json.dumps(embedding_list)
         super().save(*args, **kwargs)
-
 
 class Review(models.Model):
     orphanage = models.ForeignKey("Orphanage",on_delete=models.CASCADE,related_name="reviews")
@@ -5870,11 +5982,6 @@ class PaymentViewSet(viewsets.ModelViewSet):
 
 
 
---- FILE: services\route_service.py ---
-
-
-
-
 --- FILE: services\stripe_service.py ---
 
 import stripe
@@ -6063,19 +6170,22 @@ class OfferStatus(models.TextChoices):
     MATCHED  = "MATCHED",  "Matched"
     DONE     = "DONE",     "Done"
 
+
 class VolunteerOfferRequest(models.Model):
-    volunteer = models.ForeignKey(Volunteer, on_delete=models.CASCADE, related_name="offer_requests")
+    volunteer = models.ForeignKey("volunteers.Volunteer", on_delete=models.CASCADE, related_name="offer_requests")
     title = models.CharField(max_length=255)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, choices=OfferStatus.choices,default=OfferStatus.OPEN)
+    status = models.CharField(max_length=10, choices=[('OPEN', 'Open'), ('MATCHED', 'Matched')], default='OPEN')
     embedding = models.TextField(null=True, blank=True)
     is_open = models.BooleanField(default=True)
-    def save(self, *args, **kwargs):    
+
+    def save(self, *args, **kwargs):
         text = f"{self.title}. {self.description}"
-        embedding_list = embed_text(text).tolist()
+        embedding_list = embed_text(text).tolist()  # Should return 1D list
         self.embedding = json.dumps(embedding_list)
         super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.title[:30]}... ({self.status})"
 
